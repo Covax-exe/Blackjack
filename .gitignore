@@ -1,0 +1,9 @@
+# Ignorar ejecutables y archivos temporales
+*.exe
+*.o
+*.obj
+*.dll
+*.log
+
+# Ignorar binarios de VSCode
+.vscode/
