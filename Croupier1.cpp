@@ -46,3 +46,8 @@ void Croupier1::setMostrandoCartaOculta(bool estado) {
 bool Croupier1::getMostrandoCartaOculta() const {
     return mostrandoCartaOculta;
 }
+void Croupier1::mostrarTodasLasCartas() const {
+    // Llama directamente al método de la Mano1 o al método base de Participante1
+    // que se encarga de mostrar todas las cartas.
+    // Asumiendo que Mano1::mostrarMano() ya muestra todas las cartas que tiene.
+    mano.mostrarMano(); // La Mano1 es un miembro de Participante1 y Croupier1 tiene acceso.
