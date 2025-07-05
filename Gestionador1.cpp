@@ -64,14 +64,12 @@ void Gestionador1::terminarJuego() {
     std::cout << "\n--- FIN DE LA RONDA ---" << std::endl;
 
     // 1. Mostrar las cartas del crupier (todas reveladas)
-    if (croupier) { // Asegúrate de que el puntero no sea nullptr
-        // No necesitas cambiar el estado de 'mostrandoCartaOculta' del crupier aquí
-        // si solo quieres mostrarlas y no afectar su lógica de turno.
-        // Simplemente llama al método que muestra todas:
-        std::cout << croupier->getNombre() << " revela: ";
-        croupier->mostrarTodasLasCartas(); 
+    if (croupier != nullptr) { // Verificación de puntero a nullptr
+        std::cout << croupier->getNombre() << " revela sus cartas: ";
+        croupier->mostrarTodasLasCartas();
         std::cout << " (" << croupier->getValorMano() << " puntos)" << std::endl;
+    } else {
+        std::cerr << "Error: El crupier no está inicializado. No se puede mostrar su mano." << std::endl;
     }
-    
-    // ... (resto de la lógica de terminarJuego, definirGanadores, pagarApuestas, etc.) ...
+    // .....
 }
