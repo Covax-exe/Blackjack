@@ -76,6 +76,7 @@ void Gestionador1::terminarJuego()
         std::cerr << "Error: El crupier no está inicializado. No se puede mostrar su mano." << std::endl;
     }
     // .....
+    // AJSKDJAK Y ESTE COMENTARIO TAN EXPLICITO AMOR?? 🥰💜
 }
 
 // solicita a cada jugador que ingrese su apuesta, validando que sea un numero positivo
