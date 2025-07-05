@@ -59,3 +59,12 @@ int Gestionador1::getNumeroJugadores() const
 {
     return participantes.size(); // retorna el numero de participantes en el juego usando el vector
 }
+
+void Gestionador1::terminiarJuego(){
+    
+
+
+
+
+    
+}
