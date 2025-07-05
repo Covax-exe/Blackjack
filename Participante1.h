@@ -9,7 +9,8 @@ enum class EstadoParticipante {
     JUGANDO,     // El participante está activo y puede tomar decisiones
     PLANTADO,    // El participante ha decidido no pedir más cartas
     PASADO,      // El valor de la mano del participante ha excedido 21
-    BLACKJACK,   // El participante tiene un Blackjack (21 con dos cartas)
+    BLACKJACK,// El participante tiene un Blackjack (21 con dos cartas)
+    RETIRADO, //El participante se retira y se le devuelve el 30% de la apuesta hecha.
     // Puedes añadir RETIRADO/SURRENDERED si implementas esa opción
     // RETIRADO,
 };
