@@ -43,9 +43,19 @@ int Gestionador1::agregarJugador(const std::string &nombre)
     std::cout << "Jugador " << nombre << " agregado al juego." << std::endl;
 }
 
+Jugador1 *Gestionador1::getJugador(int indice)
+{
+    // verifica si el indice es válido
+    if (indice < 0 || indice >= participantes.size())
+    {
+        std::cerr << "Error: Índice de jugador inválido." << std::endl; // cerr se usa para que muestr error
+        return nullptr;                                                 // retorna nullptr si el indice es invalido
+    }
+    // devuelve el jugador en la posicion indicada, asegurando que sea del tipo Jugador1
+    return dynamic_cast<Jugador1 *>(participantes[indice]);
+}
+
 int Gestionador1::getNumeroJugadores() const
 {
     return participantes.size(); // retorna el numero de participantes en el juego usando el vector
 }
-
-int
