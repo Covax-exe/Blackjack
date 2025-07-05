@@ -29,5 +29,6 @@ public:
     void abrirApuestas();
     Jugador1 *getJugador(int indice);
     int getNumeroJugadores() const;
+    int totalApuestasPartida() const;
 };
 #endif // GESTIONADOR1_H
