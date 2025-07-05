@@ -11,9 +11,10 @@
 class Gestionador1
 {
 private:
-    std::vector<Jugador1 *> jugadores;
-    Croupier1 *croupier;
+    std::vector<Participante1*> participantes;
+    Croupier1* croupier;
     Baraja1 baraja;
+    int totalApuestasJuego;
 
 public:
     Gestionador1();
