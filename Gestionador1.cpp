@@ -60,11 +60,18 @@ int Gestionador1::getNumeroJugadores() const
     return participantes.size(); // retorna el numero de participantes en el juego usando el vector
 }
 
-void Gestionador1::terminiarJuego(){
+void Gestionador1::terminarJuego() {
+    std::cout << "\n--- FIN DE LA RONDA ---" << std::endl;
+
+    // 1. Mostrar las cartas del crupier (todas reveladas)
+    if (croupier) { // Asegúrate de que el puntero no sea nullptr
+        // No necesitas cambiar el estado de 'mostrandoCartaOculta' del crupier aquí
+        // si solo quieres mostrarlas y no afectar su lógica de turno.
+        // Simplemente llama al método que muestra todas:
+        std::cout << croupier->getNombre() << " revela: ";
+        croupier->mostrarTodasLasCartas(); 
+        std::cout << " (" << croupier->getValorMano() << " puntos)" << std::endl;
+    }
     
-
-
-
-
-    
+    // ... (resto de la lógica de terminarJuego, definirGanadores, pagarApuestas, etc.) ...
 }
