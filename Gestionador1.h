@@ -24,7 +24,7 @@ public:
     void definirGanador();
     void pagarApuestas();
     void mostrarEstadoJuego() const;
-    void reiniciarJuego();
+    void terminarJuego();
     void repartirCartas(Participante1 *participante);
     void agregarJugador(const std::string &nombre);
     void abrirApuestas();
