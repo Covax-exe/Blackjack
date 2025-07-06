@@ -77,6 +77,7 @@ void Gestionador1::terminarJuego()
     }
     // .....
     // AJSKDJAK Y ESTE COMENTARIO TAN EXPLICITO AMOR?? 🥰💜
+    // xddddd, es que mira el grupo lol
 }
 
 // solicita a cada jugador que ingrese su apuesta, validando que sea un numero positivo
