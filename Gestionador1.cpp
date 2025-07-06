@@ -68,8 +68,23 @@ void Gestionador1::terminarJuego() {
         std::cout << croupier->getNombre() << " revela sus cartas: ";
         croupier->mostrarTodasLasCartas();
         std::cout << " (" << croupier->getValorMano() << " puntos)" << std::endl;
-    } else {
+    } 
+    else {
         std::cerr << "Error: El crupier no está inicializado. No se puede mostrar su mano." << std::endl;
     }
-    // .....
+    std::cout << "\n--- Manos Finales de los Jugadores ---" << std::endl;
+    for (Participante1* p : participantes) {
+        // Comprobamos si el participante actual NO es el crupier.
+        // La comparación de punteros 'p != croupier' es suficiente y segura.
+        if (p != croupier) { // Si el participante no es el crupier...
+            // Llamamos a mostrarMano() porque los Jugadores no tienen carta oculta
+            // y este método de Participante1 (o Jugador1 sobrescrito) ya hace lo correcto.
+            std::cout<< p->getNombre() << "Tiene: ";
+            p->mostrarMano(); 
+            std::cout << " (" << p->getValorMano() << " puntos)";
+            std::cout << std::endl;
+        
+        }
+    }
+    std::cout<<"Juego terminado manualmente, no se reparten apuestas ni se determina ganador."<<std::endl;
 }
