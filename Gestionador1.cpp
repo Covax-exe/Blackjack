@@ -28,15 +28,15 @@ Gestionador1::~Gestionador1()
     // Después de liberar la memoria de los objetos, limpia el vector de punteros.
     participantes.clear();
     /* 'croupierPrincipal' no se elimina por separado aquí,
-     ya que su memoria fue liberada cuando se iteró sobre 'participantes'.
-     Es buena práctica apuntarlo a nullptr para evitar punteros colgantes.
-     es una buena praactica y sugerido para evitar errores en compilación*/
+    ya que su memoria fue liberada cuando se iteró sobre 'participantes'.
+    Es buena práctica apuntarlo a nullptr para evitar punteros colgantes.
+    es una buena practica y sugerido para evitar errores en compilación*/
     croupierPrincipal = nullptr;
     std::cout << "Gestor de Blackjack destruido. Memoria de participantes liberada." << std::endl;
     // destructor hecho a "mano" para verificar la correcta liberación en memoria de los objetos creados.
 }
 
-int Gestionador1::agregarJugador(const std::string &nombre)
+void Gestionador1::agregarJugador(const std::string &nombre)
 {
     // crea un nuevo jugador y lo agrega al vector de participantes
     Jugador1 *nuevoJugador = new Jugador1(nombre);
@@ -98,22 +98,24 @@ void Gestionador1::abrirApuestas()
                 if (std::cin.fail())
                 {
                     std::cin.clear();                                                   // Limpia el error
-                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Descarta entrada inválida
+                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Descarta entrada invalida
                     std::cout << "Entrada inválida. Intenta nuevamente.\n";
                     continue;
                 }
 
-                respuesta = std::tolower(respuesta); // Acepta mayúsculas o minúsculas
+                respuesta = std::tolower(respuesta); // Acepta mayusculas o minusculas
 
                 if (respuesta == 's')
                 {
-                    jugador->setApuesta(1); // Apuesta simbólica
+                    jugador->setApuesta(1);                          // Apuesta simbolica
+                    jugador->setEstado(EstadoParticipante::JUGANDO); // activa
                     std::cout << "Has apostado esta ronda.\n";
                     break;
                 }
                 else if (respuesta == 'n')
                 {
-                    jugador->setApuesta(0); // No apostó
+                    jugador->setApuesta(0);                           // No apostó
+                    jugador->setEstado(EstadoParticipante::PLANTADO); // se retira
                     std::cout << "No apostaste esta ronda.\n";
                     break;
                 }
