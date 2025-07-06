@@ -2,6 +2,7 @@
 #include <vector>
 #include <iostream>
 #include <string>
+#include <limits> // por std::numeric_limits
 
 // Constructor
 Gestionador1::Gestionador1()
@@ -84,32 +85,43 @@ void Gestionador1::abrirApuestas()
 {
     for (Participante1 *p : participantes)
     {
-        Jugador1 *jugador = dynamic_cast<Jugador1 *>(p); // verifica si el participante es un jugador
+        Jugador1 *jugador = dynamic_cast<Jugador1 *>(p);
         if (jugador)
         {
-            int apuesta;
+            char respuesta;
             while (true)
             {
-                std::cout << "Jugador " << jugador->getNombre() << ", ingrese su apuesta (debe ser positiva): ";
-                std::cin >> apuesta;
+                std::cout << "Jugador " << jugador->getNombre() << ", ¿deseas apostar esta ronda? (s/n): ";
+                std::cin >> respuesta;
 
                 if (std::cin.fail())
                 {
-                    std::cin.clear();                                                   // limpia el error de entrada
-                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // descarta entrada invalida
-                    std::cout << "Entrada inválida. Por favor ingrese un número entero positivo.\n";
+                    std::cin.clear();                                                   // Limpia el error
+                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Descarta entrada inválida
+                    std::cout << "Entrada inválida. Intenta nuevamente.\n";
+                    continue;
                 }
-                else if (apuesta <= 0)
+
+                respuesta = std::tolower(respuesta); // Acepta mayúsculas o minúsculas
+
+                if (respuesta == 's')
                 {
-                    std::cout << "La apuesta debe ser un número positivo. Intente de nuevo.\n";
+                    jugador->setApuesta(1); // Apuesta simbólica
+                    std::cout << "Has apostado esta ronda.\n";
+                    break;
+                }
+                else if (respuesta == 'n')
+                {
+                    jugador->setApuesta(0); // No apostó
+                    std::cout << "No apostaste esta ronda.\n";
+                    break;
                 }
                 else
                 {
-                    break; // entrada valida
+                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                    std::cout << "Por favor responde solo con 's' o 'n'.\n";
                 }
             }
-
-            jugador->realizarApuesta(apuesta); // establece la apuesta valida en el jugador
         }
     }
 }
