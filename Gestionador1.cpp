@@ -57,11 +57,11 @@ void Gestionador1::terminarJuego()
     std::cout << "\n--- FIN DE LA RONDA ---" << std::endl;
 
     // 1. Mostrar las cartas del crupier (todas reveladas)
-    if (croupier != nullptr)
+    if (croupierPrincipal != nullptr)
     { // Verificación de puntero a nullptr
-        std::cout << croupier->getNombre() << " revela sus cartas: ";
-        croupier->mostrarTodasLasCartas();
-        std::cout << " (" << croupier->getValorMano() << " puntos)" << std::endl;
+        std::cout << croupierPrincipal->getNombre() << " revela sus cartas: ";
+        croupierPrincipal->mostrarTodasLasCartas();
+        std::cout << " (" << croupierPrincipal->getValorMano() << " puntos)" << std::endl;
     }
     else
     {
@@ -72,7 +72,7 @@ void Gestionador1::terminarJuego()
     for (Participante1 *p : participantes)
     {
         // Comprobamos si el participante actual NO es el crupier.
-        if (p != croupier)
+        if (p != croupierPrincipal)
         { // Si el participante no es el crupier...
             std::cout << p->getNombre() << " tiene: ";
             p->mostrarMano();
@@ -291,28 +291,28 @@ void Gestionador1::ejecutarTurno()
 
     // --- FASE 2: Turno del Crupier --- //
     std::cout << "\n--- Turno del Crupier ---" << std::endl;
-    if (croupier != nullptr)
+    if (croupierPrincipal != nullptr)
     {
-        croupier->setMostrandoCartaOculta(false);
+        croupierPrincipal->setMostrandoCartaOculta(false);
         std::cout << "El crupier revela su carta oculta." << std::endl;
         mostrarEstadoJuego();
-        while (croupier->getValorMano() < 17 && croupier->getValorMano() <= 21)
+        while (croupierPrincipal->getValorMano() < 17 && croupierPrincipal->getValorMano() <= 21)
         {
-            std::cout << "El crupier tiene " << croupier->getValorMano() << " puntos y pide carta." << std::endl;
-            repartirCarta(croupier);
+            std::cout << "El crupier tiene " << croupierPrincipal->getValorMano() << " puntos y pide carta." << std::endl;
+            repartirCarta(croupierPrincipal);
             mostrarEstadoJuego();
         }
 
         // Evaluar la mano final del crupier
-        if (croupier->getValorMano() > 21)
+        if (croupierPrincipal->getValorMano() > 21)
         {
-            std::cout << "El crupier se ha pasado con " << croupier->getValorMano() << " puntos. ¡Todos los jugadores restantes ganan!" << std::endl;
-            croupier->setEstado(EstadoParticipante::SE_PASA);
+            std::cout << "El crupier se ha pasado con " << croupierPrincipal->getValorMano() << " puntos. ¡Todos los jugadores restantes ganan!" << std::endl;
+            croupierPrincipal->setEstado(EstadoParticipante::PASADO);
         }
         else
         {
-            std::cout << "El crupier se planta con " << croupier->getValorMano() << " puntos." << std::endl;
-            croupier->setEstado(EstadoParticipante::PLANTADO);
+            std::cout << "El crupier se planta con " << croupierPrincipal->getValorMano() << " puntos." << std::endl;
+            croupierPrincipal->setEstado(EstadoParticipante::PLANTADO);
         }
     }
     else
@@ -464,8 +464,8 @@ void Gestionador1::repartoInicial() {
             repartirUnaCarta(p); 
         }
     }
-    if (croupier != nullptr) { 
-        croupier->setMostrandoCartaOculta(true); 
+    if (croupierPrincipal != nullptr) { 
+        croupierPrincipal->setMostrandoCartaOculta(true); 
     }
     std::cout << "--- Reparto Inicial Completado ---" << std::endl;
 }
