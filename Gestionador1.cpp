@@ -245,7 +245,7 @@ void Gestionador1::ejecutarTurno()
 
                     if (decision == 'p')
                     {
-                        repartirCarta(jugador); // Le damos una carta al jugador
+                        repartirUnaCarta(jugador); // Le damos una carta al jugador
                         std::cout << jugador->getNombre() << " pide una carta." << std::endl;
 
                         // Evaluar la mano después de pedir la carta
@@ -299,7 +299,7 @@ void Gestionador1::ejecutarTurno()
         while (croupierPrincipal->getValorMano() < 17 && croupierPrincipal->getValorMano() <= 21)
         {
             std::cout << "El crupier tiene " << croupierPrincipal->getValorMano() << " puntos y pide carta." << std::endl;
-            repartirCarta(croupierPrincipal);
+            repartirUnaCarta(croupierPrincipal);
             mostrarEstadoJuego();
         }
 
@@ -353,7 +353,7 @@ void Gestionador1::mostrarIndicesJugadores() const
 /*-----------------------------------------------------------------------------------------------------------------------------*/
 
 // Muestra el estado actual del juego (croupier y jugadores)
-void Gestionador1::mostrarEstadoJuego()
+void Gestionador1::mostrarEstadoJuego() const
 {
     // imprime un encabezado para separar visualmente la sección de estado del juego
     std::cout << "\n====== ESTADO ACTUAL DEL JUEGO ======" << std::endl;
@@ -439,15 +439,12 @@ void Gestionador1::repartirUnaCarta(Participante1 *p)
         return;
     }
     // 1. Obtener la carta de la baraja:
-    Carta1 *cartaObtenidaDeBaraja = baraja.repartirCarta();
+    Carta1 *cartaObtenidaDeBaraja = baraja.repartirUnaCarta();
 
     if (cartaObtenidaDeBaraja != nullptr)
     {
         // 2. Entregar la carta al participante:
-        if (!p->recibirCarta(cartaObtenidaDeBaraja))
-        {
-            std::cerr << "Error: Falló al agregar carta a la mano de " << p->getNombre() << "." << std::endl;
-        }
+        p->recibirCarta(cartaObtenidaDeBaraja)
     }
     else
     {
