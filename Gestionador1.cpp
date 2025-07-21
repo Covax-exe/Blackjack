@@ -45,7 +45,7 @@ void Gestionador1::agregarJugador(const std::string &nombre)
     std::cout << "Jugador " << nombre << " agregado al juego." << std::endl;
 }
 
-//se eliminó la anterior version de get jugador.
+// se eliminó la anterior version de get jugador.
 
 int Gestionador1::getNumeroJugadores() const
 {
@@ -431,41 +431,53 @@ Jugador1 *Gestionador1::getJugador(int indice)
     return nullptr;
 }
 /*----------------------------------------------------------------------------------------------------------------*/
-void Gestionador1::repartirUnaCarta(Participante1* p) {
-   if (p == nullptr) {
+void Gestionador1::repartirUnaCarta(Participante1 *p)
+{
+    if (p == nullptr)
+    {
         std::cerr << "Error: Intentando repartir carta a un participante nulo." << std::endl;
         return;
     }
     // 1. Obtener la carta de la baraja:
-    Carta1* cartaObtenidaDeBaraja = baraja.repartirCarta(); 
+    Carta1 *cartaObtenidaDeBaraja = baraja.repartirCarta();
 
-    if (cartaObtenidaDeBaraja != nullptr) {
+    if (cartaObtenidaDeBaraja != nullptr)
+    {
         // 2. Entregar la carta al participante:
-        if (!p->recibirCarta(cartaObtenidaDeBaraja)) {
+        if (!p->recibirCarta(cartaObtenidaDeBaraja))
+        {
             std::cerr << "Error: Falló al agregar carta a la mano de " << p->getNombre() << "." << std::endl;
         }
-    } else {
+    }
+    else
+    {
         std::cerr << "Advertencia: No quedan cartas en la baraja para repartir." << std::endl;
     }
 }
 /*-------------------------------------------------------------------------------------------------------------------*/
-void Gestionador1::repartoInicial() {
+void Gestionador1::repartoInicial()
+{
     std::cout << "\n--- Iniciando el Reparto Inicial de Cartas ---" << std::endl;
 
     std::cout << "Repartiendo la primera carta a cada participante..." << std::endl;
-    for (Participante1* p : participantes) { 
-        if (p != nullptr) {
-            repartirUnaCarta(p); 
+    for (Participante1 *p : participantes)
+    {
+        if (p != nullptr)
+        {
+            repartirUnaCarta(p);
         }
     }
     std::cout << "Repartiendo la segunda carta a cada participante..." << std::endl;
-    for (Participante1* p : participantes) {
-        if (p != nullptr) {
-            repartirUnaCarta(p); 
+    for (Participante1 *p : participantes)
+    {
+        if (p != nullptr)
+        {
+            repartirUnaCarta(p);
         }
     }
-    if (croupierPrincipal != nullptr) { 
-        croupierPrincipal->setMostrandoCartaOculta(true); 
+    if (croupierPrincipal != nullptr)
+    {
+        croupierPrincipal->setMostrandoCartaOculta(true);
     }
     std::cout << "--- Reparto Inicial Completado ---" << std::endl;
 }
