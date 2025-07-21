@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <limits> // por std::numeric_limits
+#include <cstdlib> // Necesario para la función exit()
 
 // Constructor
 Gestionador1::Gestionador1()
@@ -61,24 +62,37 @@ int Gestionador1::getNumeroJugadores() const
     return participantes.size(); // retorna el numero de participantes en el juego usando el vector
 }
 
-void Gestionador1::terminarJuego()
-{
+void Gestionador1::terminarJuego() {
     std::cout << "\n--- FIN DE LA RONDA ---" << std::endl;
 
     // 1. Mostrar las cartas del crupier (todas reveladas)
-    if (croupier != nullptr)
-    { // Verificación de puntero a nullptr
+    if (croupier != nullptr) { // Verificación de puntero a nullptr
         std::cout << croupier->getNombre() << " revela sus cartas: ";
         croupier->mostrarTodasLasCartas();
         std::cout << " (" << croupier->getValorMano() << " puntos)" << std::endl;
-    }
-    else
-    {
+    } else {
         std::cerr << "Error: El crupier no está inicializado. No se puede mostrar su mano." << std::endl;
     }
-    // .....
-    // AJSKDJAK Y ESTE COMENTARIO TAN EXPLICITO AMOR?? 🥰💜
-    // xddddd, es que mira el grupo lol
+
+    std::cout << "\n--- Manos Finales de los Jugadores ---" << std::endl;
+    for (Participante1* p : participantes) {
+        // Comprobamos si el participante actual NO es el crupier.
+        if (p != croupier) { // Si el participante no es el crupier...
+            std::cout << p->getNombre() << " tiene: ";
+            p->mostrarMano();
+            std::cout << " (" << p->getValorMano() << " puntos)";
+            std::cout << std::endl; // Nueva línea al final de cada jugador
+        }
+    }
+    std::cout << "---------------------------------------" << std::endl;
+
+    // Mensaje para indicar que el juego ha finalizado y no se continuará.
+    std::cout << "Juego finalizado. ¡Gracias por jugar!" << std::endl;
+
+    // El destructor de Gestionador1 SÍ se llamará automáticamente antes de salir.
+    // ----------------------------------------------------------------------------------
+    // Llama a exit(0) para terminar el programa completamente
+    exit(0); 
 }
 
 // solicita a cada jugador que ingrese su apuesta, validando que sea un numero positivo
