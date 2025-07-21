@@ -456,13 +456,10 @@ void Gestionador1::repartirCarta(Participante1* p) {
     }
     
     // 1. Obtener la carta de la baraja:
-    // Esta línea llama a Baraja1::repartirCarta() que te da una Carta1*.
     Carta1* cartaObtenidaDeBaraja = baraja.repartirCarta(); 
 
     if (cartaObtenidaDeBaraja != nullptr) {
         // 2. Entregar la carta al participante:
-        // ¡Esta línea es la clave! Llama a p->recibirCarta(), que a su vez la pasa a p->mano.agregarCarta().
-        // Así es como la carta llega al vector de la mano del participante.
         if (!p->recibirCarta(cartaObtenidaDeBaraja)) {
             std::cerr << "Error: Falló al agregar carta a la mano de " << p->getNombre() << "." << std::endl;
         }
