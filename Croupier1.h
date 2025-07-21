@@ -12,7 +12,7 @@ class Croupier1 : public Participante1 {
 
     bool debePedirCarta() const; // Método para determinar si el croupier debe pedir carta
     void mostrarMano() const override; // Mostrar la mano del croupier, con opción de ocultar la primera carta
-    void mostrarTodasLasCartas const;
+    void mostrarTodasLasCartas() const;
 
     // Métodos para controlar el estado de la visualización de la carta oculta
     void setMostrandoCartaOculta(bool estado);
