@@ -4,7 +4,7 @@
 #include "Carta1.h" 
 class Mano1 {
     private:
-    std::vector<Carta1*> cartas; // Contiene las cartas de la mano  
+    std::vector<const Carta1*> cartas; // Contiene las cartas de la mano  
     public:
     Mano1();
     ~Mano1();
