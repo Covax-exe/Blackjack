@@ -5,15 +5,6 @@
 Mano1::Mano1() {
     // El vector 'cartas' se inicializa solo.
 }
-
-Mano1::~Mano1() {
-    // Destructor para liberar memoria de las cartas, recorre el vector de cartas y elimina cada puntero.
-    for (Carta1* carta : cartas) {
-        delete carta; // Libera la memoria de cada carta
-    }
-    cartas.clear(); // Limpia el vector de cartas
-}
-
 bool Mano1::agregarCarta(const Carta1* carta) {
     // Verificación básica para asegurar que la carta no sea un puntero nulo.
     if (carta == nullptr) {
