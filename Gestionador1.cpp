@@ -95,6 +95,80 @@ void Gestionador1::terminarJuego() {
     exit(0); 
 }
 
+
+// Este método muestra por consola el resultado final de las apuestas
+// No se realiza ningún pago real ni modificación de saldo
+// Solo se informa quién gana, pierde o empata según el valor de su mano
+void Gestionador1::pagarApuestas()
+{
+    // Imprime el encabezado para la sección de pagos
+    std::cout << "\n--- PAGOS DE LA RONDA ---" << std::endl;
+
+    // Obtiene el valor total de la mano del croupier
+    int valorCroupier = croupierPrincipal->getValorMano();
+
+    // Verifica si el croupier se pasó de 21 puntos
+    bool croupierSePaso = croupierPrincipal->estaPasado();
+
+    // Recorre el vector de todos los participantes en el juego
+    for (Participante1* p : participantes)
+    {
+        // Intentamos convertir 'p' (Participante1*) a 'Jugador1*' usando dynamic_cast.
+        // Esto nos permite distinguir jugadores reales del croupier dentro del vector 'participantes'.
+        // Si 'p' es un Jugador1, obtenemos el puntero; si es un Croupier1, obtenemos nullptr y lo ignoramos.
+
+        Jugador1* jugador = dynamic_cast<Jugador1*>(p);
+
+        // Verifica que efectivamente sea un jugador y que haya hecho una apuesta (mayor a 0)
+        if (jugador && jugador->getApuesta() > 0)
+        {
+            // Obtiene la cantidad apostada por este jugador
+            int apuesta = jugador->getApuesta();
+
+            // Obtiene el valor total de la mano del jugador
+            int valorJugador = jugador->getValorMano();
+
+            // Verifica si el jugador se pasó de 21 puntos
+            bool jugadorSePaso = jugador->estaPasado();
+
+            // Muestra el nombre del jugador evaluado
+            std::cout << "\nJugador " << jugador->getNombre() << ": ";
+
+            // Si el jugador se pasó de 21, pierde automáticamente
+            if (jugadorSePaso)
+            {
+                std::cout << "Pierde su apuesta de " << apuesta << " unidades." << std::endl;
+            }
+
+            // Si el jugador tiene blackjack y el croupier no, gana automáticamente
+            else if (jugador->tieneBlackjackActivo() && !croupierPrincipal->tieneBlackjackActivo())
+            {
+                // Se le informa que gana el doble de su apuesta (según la lógica actual del juego)
+                std::cout << "¡Blackjack! Gana " << apuesta * 2 << " unidades." << std::endl;
+            }
+
+            // Si el croupier se pasó o el jugador tiene mayor puntuación, gana
+            else if (croupierSePaso || valorJugador > valorCroupier)
+            {
+                std::cout << "Gana " << apuesta << " unidades." << std::endl;
+            }
+
+            // Si el valor de la mano del jugador es menor al del croupier, pierde
+            else if (valorJugador < valorCroupier)
+            {
+                std::cout << "Pierde su apuesta de " << apuesta << " unidades." << std::endl;
+            }
+
+            // Si el jugador y el croupier tienen el mismo puntaje, hay empate
+            else
+            {
+                std::cout << "Empate. Recupera su apuesta de " << apuesta << " unidades." << std::endl;
+            }
+        }
+    }
+}
+
+
 // solicita a cada jugador que ingrese su apuesta, validando que sea un numero positivo
 void Gestionador1::abrirApuestas()
 {
