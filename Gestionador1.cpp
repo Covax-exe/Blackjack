@@ -245,7 +245,7 @@ void Gestionador1::ejecutarTurno()
 
                     if (decision == 'p')
                     {
-                        repartirUnaCarta(jugador); // Le damos una carta al jugador
+                        repartirCarta(jugador); // Le damos una carta al jugador
                         std::cout << jugador->getNombre() << " pide una carta." << std::endl;
 
                         // Evaluar la mano después de pedir la carta
@@ -299,7 +299,7 @@ void Gestionador1::ejecutarTurno()
         while (croupierPrincipal->getValorMano() < 17 && croupierPrincipal->getValorMano() <= 21)
         {
             std::cout << "El crupier tiene " << croupierPrincipal->getValorMano() << " puntos y pide carta." << std::endl;
-            repartirUnaCarta(croupierPrincipal);
+            repartirCarta(croupierPrincipal);
             mostrarEstadoJuego();
         }
 
@@ -431,7 +431,7 @@ Jugador1 *Gestionador1::getJugador(int indice)
     return nullptr;
 }
 /*----------------------------------------------------------------------------------------------------------------*/
-void Gestionador1::repartirUnaCarta(Participante1 *p)
+void Gestionador1::repartirCarta(Participante1 *p)
 {
     if (p == nullptr)
     {
@@ -439,12 +439,12 @@ void Gestionador1::repartirUnaCarta(Participante1 *p)
         return;
     }
     // 1. Obtener la carta de la baraja:
-    Carta1 *cartaObtenidaDeBaraja = baraja.repartirUnaCarta();
+    Carta1 *cartaObtenidaDeBaraja = baraja.repartirCarta();
 
     if (cartaObtenidaDeBaraja != nullptr)
     {
         // 2. Entregar la carta al participante:
-        p->recibirCarta(cartaObtenidaDeBaraja)
+        p->recibirCarta(cartaObtenidaDeBaraja);
     }
     else
     {
@@ -461,7 +461,7 @@ void Gestionador1::repartoInicial()
     {
         if (p != nullptr)
         {
-            repartirUnaCarta(p);
+            repartirCarta(p);
         }
     }
     std::cout << "Repartiendo la segunda carta a cada participante..." << std::endl;
@@ -469,7 +469,7 @@ void Gestionador1::repartoInicial()
     {
         if (p != nullptr)
         {
-            repartirUnaCarta(p);
+            repartirCarta(p);
         }
     }
     if (croupierPrincipal != nullptr)
