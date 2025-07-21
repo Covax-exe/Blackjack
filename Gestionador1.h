@@ -19,6 +19,7 @@ private:
 public:
     Gestionador1();
     ~Gestionador1();
+    void repartirUnaCarta(Participante1 *participante);
     void iniciarJuego(); // Versión sin reglas explícitas
     void ejecutarTurno();
     void definirGanador();
