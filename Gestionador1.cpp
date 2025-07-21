@@ -335,7 +335,7 @@ void Gestionador1::mostrarIndicesJugadores() const
         {
             continue;
         }
-        if (p != this->croupier)
+        if (p != this->croupierPrincipal)
         {
             if (Jugador1 *jugador = dynamic_cast<Jugador1 *>(p))
             {
@@ -413,7 +413,7 @@ Jugador1 *Gestionador1::getJugador(int indice)
             continue;
         }
 
-        if (p == this->croupier)
+        if (p == this->croupierPrincipal)
         {
             continue;
         }
