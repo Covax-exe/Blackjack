@@ -440,7 +440,7 @@ Jugador1 *Gestionador1::getJugador(int indice)
     std::cerr << "Error: Índice de jugador fuera de rango o jugador no encontrado para el índice " << indice << "." << std::endl;
     return nullptr;
 }
-/*----------------------------------------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------------------------------------------*/
 void Gestionador1::repartirUnaCarta(Participante1* p) {
     if (p == nullptr) {
         std::cerr << "Error: Intentando repartir carta a un participante nulo." << std::endl;
@@ -477,3 +477,25 @@ void Gestionador1::repartirCarta(Participante1* p) {
         std::cerr << "Advertencia: No quedan cartas en la baraja para repartir." << std::endl;
     }
 }
+/*-------------------------------------------------------------------------------------------------------------------*/
+void Gestionador1::repartoInicial() {
+    std::cout << "\n--- Iniciando el Reparto Inicial de Cartas ---" << std::endl;
+
+    std::cout << "Repartiendo la primera carta a cada participante..." << std::endl;
+    for (Participante1* p : participantes) { 
+        if (p != nullptr) {
+            repartirUnaCarta(p); 
+        }
+    }
+    std::cout << "Repartiendo la segunda carta a cada participante..." << std::endl;
+    for (Participante1* p : participantes) {
+        if (p != nullptr) {
+            repartirUnaCarta(p); 
+        }
+    }
+    if (croupier != nullptr) { 
+        croupier->setMostrandoCartaOculta(true); 
+    }
+    std::cout << "--- Reparto Inicial Completado ---" << std::endl;
+}
+/*-------------------------------------------------------------------------------------------------------------------*/
