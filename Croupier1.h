@@ -17,6 +17,7 @@ class Croupier1 : public Participante1 {
     // Métodos para controlar el estado de la visualización de la carta oculta
     void setMostrandoCartaOculta(bool estado);
     bool getMostrandoCartaOculta() const;
+    void mostrarIndicesJugadores() const;
 
 };
 #endif // CROUPIER1_H   
