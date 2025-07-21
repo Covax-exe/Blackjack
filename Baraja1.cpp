@@ -66,10 +66,18 @@ Carta1* Baraja1::repartirCarta() {
         std::cout << "No hay cartas disponibles para repartir :( ." << std::endl;
         return nullptr; // Si no hay cartas, retorna nullptr
     }
-    Carta1* carta = cartas.front(); // Obtiene la última carta del vector
-    cartas.erase(cartas.begin()); // Elimina la carta del vector, erase elimina uno o mas elementos de un contenedor, en este caso el vector.
-    return carta; // Retorna la carta repartida
-    std::cout << "Carta repartida con exito!: " << (*carta).toString() << std::endl; // Imprime la carta repartida, una alternativa a usar "->" es (*nombre_variable).toString()
+    
+    // Obtiene el puntero a la primera carta del vector (la "carta superior" del mazo)
+    Carta1* carta = cartas.front(); 
+    
+    // Elimina esa carta del vector. Esto asegura que no se repita.
+    cartas.erase(cartas.begin()); 
+    
+    // Imprime la carta repartida. Esto ahora se ejecutará.
+    std::cout << "Carta repartida con exito!: " << (*carta).toString() << std::endl; 
+    
+    // Retorna el puntero a la carta repartida.
+    return carta; 
 }
 
 
