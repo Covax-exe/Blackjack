@@ -7,7 +7,7 @@ class Mano1 {
     std::vector<const Carta1*> cartas; // Contiene las cartas de la mano  
     public:
     Mano1();
-    ~Mano1();
+    ~Mano1() == default;
     bool agregarCarta(const Carta1* carta); // Agrega una carta a la mano
     int getValorTotal() const; // Calcula el valor total de la mano
     void mostrarMano() const; // Muestra las cartas de la mano
