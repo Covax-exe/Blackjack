@@ -440,3 +440,40 @@ Jugador1 *Gestionador1::getJugador(int indice)
     std::cerr << "Error: Índice de jugador fuera de rango o jugador no encontrado para el índice " << indice << "." << std::endl;
     return nullptr;
 }
+/*----------------------------------------------------------------------------------------------------------*/
+void Gestionador1::repartirUnaCarta(Participante1* p) {
+    if (p == nullptr) {
+        std::cerr << "Error: Intentando repartir carta a un participante nulo." << std::endl;
+        return;
+    }
+    Carta1* cartaObtenidaDeBaraja = baraja.repartirCarta(); 
+
+    if (cartaObtenidaDeBaraja != nullptr) {
+void Gestionador1::repartirCarta(Participante1* p) {
+    if (p == nullptr) {
+        std::cerr << "Error: Intentando repartir carta a un participante nulo." << std::endl;
+        return;
+    }
+    
+    // 1. Obtener la carta de la baraja:
+    // Esta línea llama a Baraja1::repartirCarta() que te da una Carta1*.
+    Carta1* cartaObtenidaDeBaraja = baraja.repartirCarta(); 
+
+    if (cartaObtenidaDeBaraja != nullptr) {
+        // 2. Entregar la carta al participante:
+        // ¡Esta línea es la clave! Llama a p->recibirCarta(), que a su vez la pasa a p->mano.agregarCarta().
+        // Así es como la carta llega al vector de la mano del participante.
+        if (!p->recibirCarta(cartaObtenidaDeBaraja)) {
+            std::cerr << "Error: Falló al agregar carta a la mano de " << p->getNombre() << "." << std::endl;
+        }
+    } else {
+        std::cerr << "Advertencia: No quedan cartas en la baraja para repartir." << std::endl;
+    }
+}
+        if (!p->recibirCarta(cartaObtenidaDeBaraja)) {
+            std::cerr << "Error: Falló al agregar carta a la mano de " << p->getNombre() << "." << std::endl;
+        }
+    } else {
+        std::cerr << "Advertencia: No quedan cartas en la baraja para repartir." << std::endl;
+    }
+}
