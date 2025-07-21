@@ -19,7 +19,7 @@ private:
 public:
     Gestionador1();
     ~Gestionador1();
-    void repartirUnaCarta(Participante1 *participante);
+    void repartirCarta(Participante1 *participante);
     void iniciarJuego(); // Versión sin reglas explícitas
     void ejecutarTurno();
     void definirGanador();
@@ -29,9 +29,9 @@ public:
     void repartoInicial();
     void agregarJugador(const std::string &nombre);
     void abrirApuestas();
+    void mostrarIndicesJugadores() const;
     Jugador1 *getJugador(int indice);
     int getNumeroJugadores() const;
     int totalApuestasPartida() const;
-    void mostrarIndicesJugadores() const;
 };
 #endif // GESTIONADOR1_H
