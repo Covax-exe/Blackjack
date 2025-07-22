@@ -479,3 +479,28 @@ void Gestionador1::repartoInicial()
     std::cout << "--- Reparto Inicial Completado ---" << std::endl;
 }
 /*-------------------------------------------------------------------------------------------------------------------*/
+// Este método reparte dos cartas iniciales a todos los jugadores activos
+// y al croupier, para iniciar la ronda del juego.
+void Gestionador1::iniciarJuego()
+{
+    std::cout << "\nRepartiendo cartas iniciales...\n";
+
+    // 🔹 Repartir 2 cartas a cada jugador que haya apostado
+    for (Participante1* p : participantes)
+    {
+        Jugador1* jugador = dynamic_cast<Jugador1*>(p);
+        if (jugador && jugador->getApuesta() > 0)
+        {
+            repartirCartas(jugador);
+            repartirCartas(jugador);
+        }
+    }
+
+    // 🔹 Repartir 2 cartas al croupier
+    repartirCartas(croupierPrincipal);
+    repartirCartas(croupierPrincipal);
+
+    std::cout << "Cartas iniciales repartidas.\n";
+}
+/*-------------------------------------------------------------------------------------------------------------------*/
+
