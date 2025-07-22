@@ -483,7 +483,7 @@ void Gestionador1::repartoInicial()
 // cartas en la baraja y reparte las 2 cartas iniciales a jugadores activos y al croupier.
 void Gestionador1::iniciarJuego()
 {
-    std::cout << "\n=== Repartiendo cartas iniciales ===\n";
+    std::cout << "\n--- Repartiendo cartas iniciales ---\n";
 
     // Limpiar manos y reiniciar estados
     // Antes de empezar, aseguramos que las manos estén vacías
@@ -523,8 +523,73 @@ void Gestionador1::iniciarJuego()
     repartirCartas(croupierPrincipal);
     repartirCartas(croupierPrincipal);
 
-    std::cout << "=== Cartas iniciales repartidas correctamente ===\n";
+    std::cout << "--- Cartas iniciales repartidas correctamente ---\n";
 }
 
+/*-------------------------------------------------------------------------------------------------------------------*/
+
+// Este método compara las manos de todos los jugadores contra la del croupier,
+// determina si ganan, pierden o empatan, y muestra el resultado por consola.
+void Gestionador1::definirGanador()
+{
+    std::cout << "\n--- Resultados de la ronda ---\n";
+
+    //Obtener datos del croupier
+    int valorCroupier = croupierPrincipal->getValorMano();
+    bool croupierSePaso = croupierPrincipal->estaPasado();
+
+    //Analizar a cada jugador en el vector de participantes
+    for (Participante1* p : participantes)
+    {
+        Jugador1* jugador = dynamic_cast<Jugador1*>(p);
+
+        // Solo evaluamos jugadores reales que hayan hecho una apuesta
+        if (jugador && jugador->getApuesta() > 0)
+        {
+            int valorJugador = jugador->getValorMano();
+            bool jugadorSePaso = jugador->estaPasado();
+
+            std::cout << "\nJugador " << jugador->getNombre()
+                      << " tiene " << valorJugador << " puntos. ";
+
+            //  Caso 1: El jugador se pasó de 21 → pierde automáticamente
+            if (jugadorSePaso)
+            {
+                std::cout << "Se pasó. Pierde.\n";
+                jugador->setEstado(EstadoParticipante::PASADO);
+            }
+            //  Caso 2: Jugador tiene Blackjack y el croupier no → gana automáticamente
+            else if (jugador->tieneBlackjackActivo() && !croupierPrincipal->tieneBlackjackActivo())
+            {
+                std::cout << "¡Blackjack! Gana automáticamente.\n";
+                jugador->setEstado(EstadoParticipante::BLACKJACK);
+            }
+            //  Caso 3: El croupier se pasó → gana el jugador
+            else if (croupierSePaso)
+            {
+                std::cout << "El croupier se pasó. ¡Gana el jugador!\n";
+            }
+            // Caso 4: Jugador tiene más puntos que el croupier → gana
+            else if (valorJugador > valorCroupier)
+            {
+                std::cout << "Tiene más puntos que el croupier. ¡Gana!\n";
+            }
+            //  Caso 5: Jugador tiene menos puntos que el croupier → pierde
+            else if (valorJugador < valorCroupier)
+            {
+                std::cout << "Tiene menos puntos que el croupier. Pierde.\n";
+                jugador->setEstado(EstadoParticipante::PASADO);
+            }
+            //  Caso 6: Empate → recupera su apuesta (push)
+            else
+            {
+                std::cout << "Empate. Recupera su apuesta.\n";
+                //Aqui no se cambia de estado, no es necesario.
+            }
+        }
+    }
+
+    std::cout << "\n=== Fin de resultados ===\n";
+}
 /*-------------------------------------------------------------------------------------------------------------------*/
 
