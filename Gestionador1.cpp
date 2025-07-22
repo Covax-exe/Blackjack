@@ -82,12 +82,11 @@ void Gestionador1::iniciarJuego()
     int necesarias = participantes.size() * 2;
 
     // Validar si la baraja tiene suficientes cartas
-    // Si no alcanza, reiniciamos o barajamos un nuevo mazo.
-    if (baraja.getNumeroCartas() < necesarias)
-    {
-        std::cout << "Advertencia: No hay suficientes cartas. Reiniciando baraja...\n";
-        baraja = Baraja1(); // O puedes usar baraja.barajar() si prefieres solo mezclar
+    // advertir si quedan pocas cartas
+    if (baraja.getNumeroCartas() < participantes.size() * 2) {
+        std::cout << "Advertencia: Quedan pocas cartas en el mazo. Puede ser necesario barajar pronto.\n";
     }
+
 
     // Repartir 2 cartas a cada jugador activo
     for (Participante1 *p : participantes)
