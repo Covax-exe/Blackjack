@@ -33,6 +33,9 @@ public:
     virtual int getValorMano() const; // El participante le pide el valor a su mano
     virtual std::string getNombre() const;
     virtual bool tieneBlackjack() const; // El participante le pregunta a su mano si tiene Blackjack
+    virtual  const Mano1& getMano() const {
+        return mano;
+    }
 
     // Otros métodos específicos de participante si los tienes
     void limpiarMano(); // Un método para resetear la mano (vaciarla)
