@@ -14,20 +14,12 @@ public:
     void mostrarMano() const;               // Muestra las cartas de la mano
     bool tieneBlackjack() const;            // Verifica si la mano tiene Blackjack
 
-    const Carta1 *getCarta(size_t index) const
-    {
-        if (index < cartas.size())
-        {
-            return cartas.at(index);
-        }
-        return nullptr;
-    }
+    // Método para obtener una carta específica por índice
+    const Carta1* getCarta(int indice) const;
+    
+    // Método para obtener el número de cartas en la mano
+    int getNumeroCartas() const;
 
-    // Método para saber cuántas cartas hay
-    size_t getNumeroCartas() const
-    {
-        return cartas.size();
-    }
 };
 #endif // MANO1_H
 // Fin del archivo Mano1.h
