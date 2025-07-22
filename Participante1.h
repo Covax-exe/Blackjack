@@ -46,11 +46,6 @@ public:
     bool estaPlantado() const;
     bool estaPasado() const;
     bool tieneBlackjackActivo() const; // Diferente de 'tieneBlackjack()' de Mano1, este es un estado.
-    // Métodos para acceder a información de la mano (solo lectura segura)
-    const Mano1& getMano() const;            // Permite acceder a la mano en modo lectura (sin modificar)
-    int getNumeroCartas() const;             // Devuelve el número de cartas en la mano
-    const Carta1* getCarta(int indice) const; // Devuelve una carta específica por índice
-
 };
 
 #endif // PARTICIPANTE1_H
