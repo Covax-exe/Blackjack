@@ -78,3 +78,14 @@ void Participante1::limpiarMano() {
     mano = Mano1(); // Vacía la mano (llama al destructor de la mano anterior)
     estadoActual = EstadoParticipante::JUGANDO; // Resetea el estado a 'JUGANDO' para la nueva ronda
 }
+// --- getNumeroCartas ---
+// Retorna el número de cartas en la mano del participante.
+int Participante1::getNumeroCartas() const {
+    return mano.getNumeroCartas();
+}
+
+// --- getCarta ---
+// Retorna una carta específica por índice de la mano del participante
+const Carta1* Participante1::getCarta(int indice) const {
+    return mano.getCarta(indice);
+}
