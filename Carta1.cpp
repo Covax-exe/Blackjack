@@ -49,20 +49,17 @@ std::string Carta1::toString() const
     case NUEVE:
         valorStr = "9";
         break;
-    case DIEZ:
-        valorStr = "10";
-        break;
-    case J:
-        valorStr = "J";
-        break;
-    case Q:
-        valorStr = "Q";
-        break;
-    case K:
-        valorStr = "K";
+    case DIEZ:  // único case para todos los 10 asi evitamos errores de compilacion por valores duplicados en switch
+        if (valor_enum == DIEZ) valorStr = "10";
+        else if (valor_enum == J) valorStr = "J";
+        else if (valor_enum == Q) valorStr = "Q";
+        else if (valor_enum == K) valorStr = "K";
         break;
     case AS:
         valorStr = "A";
+        break;
+    default:
+        valorStr = "?"; // Caso por defecto para evitar errores
         break;
     }
 
