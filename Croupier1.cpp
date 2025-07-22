@@ -12,6 +12,7 @@ bool Croupier1::debePedirCarta() const {
     if (getValorMano() < 17) {
         return true; // El croupier pide carta si su mano es menor a 17
     }
+    return false; // No pide carta si tiene 17 o más
 }
 
 void Croupier1::mostrarMano() const {
