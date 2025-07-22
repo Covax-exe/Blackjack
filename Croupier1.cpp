@@ -9,7 +9,7 @@ Croupier1::Croupier1(const std::string& nombre)
 }
 
 bool Croupier1::debePedirCarta() const {
-    if (getValorMano() < 17) {
+    if (getMano().getValorMano() < 17) {
         return true; // El croupier pide carta si su mano es menor a 17
     }
     return false; // No pide carta si tiene 17 o más
@@ -18,7 +18,7 @@ bool Croupier1::debePedirCarta() const {
 void Croupier1::mostrarMano() const {
     std::cout << getNombre() << " tiene: ";
 
-    if (mano.getNumeroCartas() == 0) {
+    if (getMano().getNumeroCartas() == 0) {
         std::cout << "Mano vacía." << std::endl;
         return;
     }
@@ -26,10 +26,10 @@ void Croupier1::mostrarMano() const {
     if (mostrandoCartaOculta) {
         // Si la primera carta debe estar oculta
         std::cout << "[CARTA OCULTA] ";
-        if (mano.getNumeroCartas() > 1) {
+        if (getMano().getNumeroCartas() > 1) {
             // Muestra la segunda carta visible (si hay al menos dos cartas)
             // Usamos getCarta(1) para obtener la segunda carta (índice 1)
-            std::cout << mano.getCarta(1)->toString();
+            std::cout << getMano().getCarta(1)->toString();
         }
         std::cout << std::endl; // Nueva línea después de la mano parcial
     } else {
@@ -51,4 +51,4 @@ void Croupier1::mostrarTodasLasCartas() const {
     // Llama directamente al método de la Mano1 o al método base de Participante1
     // que se encarga de mostrar todas las cartas.
     // Asumiendo que Mano1::mostrarMano() ya muestra todas las cartas que tiene.
-    mano.mostrarMano(); // La Mano1 es un miembro de Participante1 y Croupier1 tiene acceso.
+    getMano().mostrarMano(); // La Mano1 es un miembro de Participante1 y Croupier1 tiene acceso.
