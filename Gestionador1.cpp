@@ -580,7 +580,7 @@ void Gestionador1::definirGanador()
                 std::cout << "Tiene menos puntos que el croupier. Pierde.\n";
                 jugador->setEstado(EstadoParticipante::PASADO);
             }
-            //  Caso 6: Empate → recupera su apuesta (push)
+            //  Caso 6: Empate → recupera su apuesta 
             else
             {
                 std::cout << "Empate. Recupera su apuesta.\n";
@@ -589,7 +589,37 @@ void Gestionador1::definirGanador()
         }
     }
 
-    std::cout << "\n=== Fin de resultados ===\n";
+    std::cout << "\n--- Fin de resultados ---\n";
 }
 /*-------------------------------------------------------------------------------------------------------------------*/
+
+// Este método calcula y devuelve el total de todas las apuestas activas,
+// sumando las apuestas hechas por cada jugador en la ronda actual. filtra solo apuestas positivas para evitar errores.
+int Gestionador1::totalApuestasPartida() const
+{
+    int total = 0;
+
+    // Recorrer todos los participantes del juego
+    for (Participante1* p : participantes)
+    {
+        //  Intentamos convertir el participante a Jugador1 para ignorar al croupier
+        Jugador1* jugador = dynamic_cast<Jugador1*>(p);
+
+        if (jugador)
+        {
+            // Guardamos la apuesta en una variable local
+            int apuesta = jugador->getApuesta();
+
+            // Sumamos solo si la apuesta es positiva (>0)
+            if (apuesta > 0)
+            {
+                total += apuesta;
+            }
+        }
+    }
+
+    // Devolver el total acumulado
+    return total;
+}
+
 
