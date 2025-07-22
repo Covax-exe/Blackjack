@@ -17,6 +17,7 @@ Gestionador1::Gestionador1()
     std::cout << "Gestor de Blackjack inicializado. Croupier y Baraja listos." << std::endl;
 }
 
+// Destructor
 Gestionador1::~Gestionador1()
 {
     // Itera sobre el vector de participantes y elimina cada objeto apuntado
@@ -37,181 +38,79 @@ Gestionador1::~Gestionador1()
     // destructor hecho a "mano" para verificar la correcta liberación en memoria de los objetos creados.
 }
 
-void Gestionador1::agregarJugador(const std::string &nombre)
+/*----------------------------------------------------------------------------------------------------------------*/
+void Gestionador1::repartirCarta(Participante1 *p)
 {
-    // crea un nuevo jugador y lo agrega al vector de participantes
-    Jugador1 *nuevoJugador = new Jugador1(nombre);
-    participantes.push_back(nuevoJugador); // agrega el nuevo jugador al vector de participantes
-    std::cout << "Jugador " << nombre << " agregado al juego." << std::endl;
-}
+    if (p == nullptr)
+    {
+        std::cerr << "Error: Intentando repartir carta a un participante nulo." << std::endl;
+        return;
+    }
+    // 1. Obtener la carta de la baraja:
+    Carta1 *cartaObtenidaDeBaraja = baraja.repartirCarta();
 
-// se eliminó la anterior version de get jugador.
-
-int Gestionador1::getNumeroJugadores() const
-{
-    return participantes.size(); // retorna el numero de participantes en el juego usando el vector
-}
-
-void Gestionador1::terminarJuego()
-{
-    std::cout << "\n--- FIN DE LA RONDA ---" << std::endl;
-
-    // 1. Mostrar las cartas del crupier (todas reveladas)
-    if (croupierPrincipal != nullptr)
-    { // Verificación de puntero a nullptr
-        std::cout << croupierPrincipal->getNombre() << " revela sus cartas: ";
-        croupierPrincipal->mostrarTodasLasCartas();
-        std::cout << " (" << croupierPrincipal->getValorMano() << " puntos)" << std::endl;
+    if (cartaObtenidaDeBaraja != nullptr)
+    {
+        // 2. Entregar la carta al participante:
+        p->recibirCarta(cartaObtenidaDeBaraja);
     }
     else
     {
-        std::cerr << "Error: El crupier no está inicializado. No se puede mostrar su mano." << std::endl;
+        std::cerr << "Advertencia: No quedan cartas en la baraja para repartir." << std::endl;
     }
-
-    std::cout << "\n--- Manos Finales de los Jugadores ---" << std::endl;
-    for (Participante1 *p : participantes)
-    {
-        // Comprobamos si el participante actual NO es el crupier.
-        if (p != croupierPrincipal)
-        { // Si el participante no es el crupier...
-            std::cout << p->getNombre() << " tiene: ";
-            p->mostrarMano();
-            std::cout << " (" << p->getValorMano() << " puntos)";
-            std::cout << std::endl; // Nueva línea al final de cada jugador
-        }
-    }
-    std::cout << "---------------------------------------" << std::endl;
-
-    // Mensaje para indicar que el juego ha finalizado y no se continuará.
-    std::cout << "Juego finalizado. ¡Gracias por jugar!" << std::endl;
-
-    // El destructor de Gestionador1 SÍ se llamará automáticamente antes de salir.
-    // ----------------------------------------------------------------------------------
-    // Llama a exit(0) para terminar el programa completamente
-    exit(0);
 }
 
-// Este método muestra por consola el resultado final de las apuestas
-// No se realiza ningún pago real ni modificación de saldo
-// Solo se informa quién gana, pierde o empata según el valor de su mano
-void Gestionador1::pagarApuestas()
+/*----------------------------------------------------------------------------------------------------------------*/
+// Este método inicializa la ronda: limpia las manos anteriores,
+// cartas en la baraja y reparte las 2 cartas iniciales a jugadores activos y al croupier.
+void Gestionador1::iniciarJuego()
 {
-    // Imprime el encabezado para la sección de pagos
-    std::cout << "\n--- PAGOS DE LA RONDA ---" << std::endl;
+    std::cout << "\n--- Repartiendo cartas iniciales ---\n";
 
-    // Obtiene el valor total de la mano del croupier
-    int valorCroupier = croupierPrincipal->getValorMano();
-
-    // Verifica si el croupier se pasó de 21 puntos
-    bool croupierSePaso = croupierPrincipal->estaPasado();
-
-    // Recorre el vector de todos los participantes en el juego
+    // Limpiar manos y reiniciar estados
+    // Antes de empezar, aseguramos que las manos estén vacías
+    // y todos los participantes marcados como 'JUGANDO' (excepto los retirados).
     for (Participante1 *p : participantes)
     {
-        // Intentamos convertir 'p' (Participante1*) a 'Jugador1*' usando dynamic_cast.
-        // Esto nos permite distinguir jugadores reales del croupier dentro del vector 'participantes'.
-        // Si 'p' es un Jugador1, obtenemos el puntero; si es un Croupier1, obtenemos nullptr y lo ignoramos.
+        p->limpiarMano();
+        p->setEstado(EstadoParticipante::JUGANDO);
+    }
 
+    // Calcular cuántas cartas mínimas se necesitan
+    // Para repartir 2 cartas a cada participante (jugadores + croupier),
+    // multiplicamos el total por 2.
+    int necesarias = participantes.size() * 2;
+
+    // Validar si la baraja tiene suficientes cartas
+    // Si no alcanza, reiniciamos o barajamos un nuevo mazo.
+    if (baraja.getNumeroCartas() < necesarias)
+    {
+        std::cout << "Advertencia: No hay suficientes cartas. Reiniciando baraja...\n";
+        baraja = Baraja1(); // O puedes usar baraja.barajar() si prefieres solo mezclar
+    }
+
+    // Repartir 2 cartas a cada jugador activo
+    for (Participante1 *p : participantes)
+    {
         Jugador1 *jugador = dynamic_cast<Jugador1 *>(p);
-
-        // Verifica que efectivamente sea un jugador y que haya hecho una apuesta (mayor a 0)
+        // Solo damos cartas a jugadores reales que hayan apostado (>0)
         if (jugador && jugador->getApuesta() > 0)
         {
-            // Obtiene la cantidad apostada por este jugador
-            int apuesta = jugador->getApuesta();
-
-            // Obtiene el valor total de la mano del jugador
-            int valorJugador = jugador->getValorMano();
-
-            // Verifica si el jugador se pasó de 21 puntos
-            bool jugadorSePaso = jugador->estaPasado();
-
-            // Muestra el nombre del jugador evaluado
-            std::cout << "\nJugador " << jugador->getNombre() << ": ";
-
-            // Si el jugador se pasó de 21, pierde automáticamente
-            if (jugadorSePaso)
-            {
-                std::cout << "Pierde su apuesta de " << apuesta << " unidades." << std::endl;
-            }
-
-            // Si el jugador tiene blackjack y el croupier no, gana automáticamente
-            else if (jugador->tieneBlackjackActivo() && !croupierPrincipal->tieneBlackjackActivo())
-            {
-                // Se le informa que gana el doble de su apuesta (según la lógica actual del juego)
-                std::cout << "¡Blackjack! Gana " << apuesta * 2 << " unidades." << std::endl;
-            }
-
-            // Si el croupier se pasó o el jugador tiene mayor puntuación, gana
-            else if (croupierSePaso || valorJugador > valorCroupier)
-            {
-                std::cout << "Gana " << apuesta << " unidades." << std::endl;
-            }
-
-            // Si el valor de la mano del jugador es menor al del croupier, pierde
-            else if (valorJugador < valorCroupier)
-            {
-                std::cout << "Pierde su apuesta de " << apuesta << " unidades." << std::endl;
-            }
-
-            // Si el jugador y el croupier tienen el mismo puntaje, hay empate
-            else
-            {
-                std::cout << "Empate. Recupera su apuesta de " << apuesta << " unidades." << std::endl;
-            }
+            repartirCarta(jugador);
+            repartirCarta(jugador);
         }
     }
+
+    // Repartir 2 cartas al croupier
+    // Además, activamos la bandera para ocultar su primera carta.
+    croupierPrincipal->setMostrandoCartaOculta(true);
+    repartirCarta(croupierPrincipal);
+    repartirCarta(croupierPrincipal);
+
+    std::cout << "--- Cartas iniciales repartidas correctamente ---\n";
 }
 
-// solicita a cada jugador que ingrese su apuesta, validando que sea un numero positivo
-void Gestionador1::abrirApuestas()
-{
-    for (Participante1 *p : participantes)
-    {
-        Jugador1 *jugador = dynamic_cast<Jugador1 *>(p);
-        if (jugador)
-        {
-            char respuesta;
-            while (true)
-            {
-                std::cout << "Jugador " << jugador->getNombre() << ", ¿deseas apostar esta ronda? (s/n): ";
-                std::cin >> respuesta;
-
-                if (std::cin.fail())
-                {
-                    std::cin.clear();                                                   // Limpia el error
-                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Descarta entrada invalida
-                    std::cout << "Entrada inválida. Intenta nuevamente.\n";
-                    continue;
-                }
-
-                respuesta = std::tolower(respuesta); // Acepta mayusculas o minusculas
-
-                if (respuesta == 's')
-                {
-                    jugador->setApuesta(1);                          // Apuesta simbolica
-                    jugador->setEstado(EstadoParticipante::JUGANDO); // activa
-                    std::cout << "Has apostado esta ronda.\n";
-                    break;
-                }
-                else if (respuesta == 'n')
-                {
-                    jugador->setApuesta(0);                           // No apostó
-                    jugador->setEstado(EstadoParticipante::PLANTADO); // se retira
-                    std::cout << "No apostaste esta ronda.\n";
-                    break;
-                }
-                else
-                {
-                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                    std::cout << "Por favor responde solo con 's' o 'n'.\n";
-                }
-            }
-        }
-    }
-}
-/*---------------------------------------------------------------------------------------------------------------------*/
-
+/*-------------------------------------------------------------------------------------------------------------------*/
 void Gestionador1::ejecutarTurno()
 {
     std::cout << "\n--- Inicio de la Fase de Turnos ---" << std::endl;
@@ -323,35 +222,146 @@ void Gestionador1::ejecutarTurno()
 
     std::cout << "\n--- Todos los turnos han sido ejecutados ---" << std::endl;
 }
-/*----------------------------------------------------------------------------------------------------------------------*/
 
-void Gestionador1::mostrarIndicesJugadores() const
+/*-------------------------------------------------------------------------------------------------------------------*/
+// Este método compara las manos de todos los jugadores contra la del croupier,
+// determina si ganan, pierden o empatan, y muestra el resultado por consola.
+void Gestionador1::definirGanador()
 {
-    std::cout << "\n--- Jugadores Disponibles ---" << std::endl;
-    int jugadorContador = 0;
+    std::cout << "\n--- Resultados de la ronda ---\n";
+
+    // Obtener datos del croupier
+    int valorCroupier = croupierPrincipal->getValorMano();
+    bool croupierSePaso = croupierPrincipal->estaPasado();
+
+    // Analizar a cada jugador en el vector de participantes
     for (Participante1 *p : participantes)
     {
-        if (p == nullptr)
+        Jugador1 *jugador = dynamic_cast<Jugador1 *>(p);
+
+        // Solo evaluamos jugadores reales que hayan hecho una apuesta
+        if (jugador && jugador->getApuesta() > 0)
         {
-            continue;
-        }
-        if (p != this->croupierPrincipal)
-        {
-            if (Jugador1 *jugador = dynamic_cast<Jugador1 *>(p))
+            int valorJugador = jugador->getValorMano();
+            bool jugadorSePaso = jugador->estaPasado();
+
+            std::cout << "\nJugador " << jugador->getNombre()
+                      << " tiene " << valorJugador << " puntos. ";
+
+            //  Caso 1: El jugador se pasó de 21 → pierde automáticamente
+            if (jugadorSePaso)
             {
-                std::cout << "  [" << jugadorContador << "] " << jugador->getNombre() << std::endl;
-                jugadorContador++;
+                std::cout << "Se pasó. Pierde.\n";
+                jugador->setEstado(EstadoParticipante::PASADO);
+            }
+            //  Caso 2: Jugador tiene Blackjack y el croupier no → gana automáticamente
+            else if (jugador->tieneBlackjackActivo() && !croupierPrincipal->tieneBlackjackActivo())
+            {
+                std::cout << "¡Blackjack! Gana automáticamente.\n";
+                jugador->setEstado(EstadoParticipante::BLACKJACK);
+            }
+            //  Caso 3: El croupier se pasó → gana el jugador
+            else if (croupierSePaso)
+            {
+                std::cout << "El croupier se pasó. ¡Gana el jugador!\n";
+            }
+            // Caso 4: Jugador tiene más puntos que el croupier → gana
+            else if (valorJugador > valorCroupier)
+            {
+                std::cout << "Tiene más puntos que el croupier. ¡Gana!\n";
+            }
+            //  Caso 5: Jugador tiene menos puntos que el croupier → pierde
+            else if (valorJugador < valorCroupier)
+            {
+                std::cout << "Tiene menos puntos que el croupier. Pierde.\n";
+                jugador->setEstado(EstadoParticipante::PASADO);
+            }
+            //  Caso 6: Empate → recupera su apuesta
+            else
+            {
+                std::cout << "Empate. Recupera su apuesta.\n";
+                // Aqui no se cambia de estado, no es necesario.
             }
         }
     }
-    if (jugadorContador == 0)
-    {
-        std::cout << "No hay jugadores en el juego (aparte del crupier)." << std::endl;
-    }
-    std::cout << "-----------------------------" << std::endl;
-}
-/*-----------------------------------------------------------------------------------------------------------------------------*/
 
+    std::cout << "\n--- Fin de resultados ---\n";
+}
+
+/*-------------------------------------------------------------------------------------------------------------------*/
+// Este método muestra por consola el resultado final de las apuestas
+// No se realiza ningún pago real ni modificación de saldo
+// Solo se informa quién gana, pierde o empata según el valor de su mano
+void Gestionador1::pagarApuestas()
+{
+    // Imprime el encabezado para la sección de pagos
+    std::cout << "\n--- PAGOS DE LA RONDA ---" << std::endl;
+
+    // Obtiene el valor total de la mano del croupier
+    int valorCroupier = croupierPrincipal->getValorMano();
+
+    // Verifica si el croupier se pasó de 21 puntos
+    bool croupierSePaso = croupierPrincipal->estaPasado();
+
+    // Recorre el vector de todos los participantes en el juego
+    for (Participante1 *p : participantes)
+    {
+        // Intentamos convertir 'p' (Participante1*) a 'Jugador1*' usando dynamic_cast.
+        // Esto nos permite distinguir jugadores reales del croupier dentro del vector 'participantes'.
+        // Si 'p' es un Jugador1, obtenemos el puntero; si es un Croupier1, obtenemos nullptr y lo ignoramos.
+
+        Jugador1 *jugador = dynamic_cast<Jugador1 *>(p);
+
+        // Verifica que efectivamente sea un jugador y que haya hecho una apuesta (mayor a 0)
+        if (jugador && jugador->getApuesta() > 0)
+        {
+            // Obtiene la cantidad apostada por este jugador
+            int apuesta = jugador->getApuesta();
+
+            // Obtiene el valor total de la mano del jugador
+            int valorJugador = jugador->getValorMano();
+
+            // Verifica si el jugador se pasó de 21 puntos
+            bool jugadorSePaso = jugador->estaPasado();
+
+            // Muestra el nombre del jugador evaluado
+            std::cout << "\nJugador " << jugador->getNombre() << ": ";
+
+            // Si el jugador se pasó de 21, pierde automáticamente
+            if (jugadorSePaso)
+            {
+                std::cout << "Pierde su apuesta de " << apuesta << " unidades." << std::endl;
+            }
+
+            // Si el jugador tiene blackjack y el croupier no, gana automáticamente
+            else if (jugador->tieneBlackjackActivo() && !croupierPrincipal->tieneBlackjackActivo())
+            {
+                // Se le informa que gana el doble de su apuesta (según la lógica actual del juego)
+                std::cout << "¡Blackjack! Gana " << apuesta * 2 << " unidades." << std::endl;
+            }
+
+            // Si el croupier se pasó o el jugador tiene mayor puntuación, gana
+            else if (croupierSePaso || valorJugador > valorCroupier)
+            {
+                std::cout << "Gana " << apuesta << " unidades." << std::endl;
+            }
+
+            // Si el valor de la mano del jugador es menor al del croupier, pierde
+            else if (valorJugador < valorCroupier)
+            {
+                std::cout << "Pierde su apuesta de " << apuesta << " unidades." << std::endl;
+            }
+
+            // Si el jugador y el croupier tienen el mismo puntaje, hay empate
+            else
+            {
+                std::cout << "Empate. Recupera su apuesta de " << apuesta << " unidades." << std::endl;
+            }
+        }
+    }
+}
+
+/*-------------------------------------------------------------------------------------------------------------------*/
 // Muestra el estado actual del juego (croupier y jugadores)
 void Gestionador1::mostrarEstadoJuego() const
 {
@@ -394,8 +404,161 @@ void Gestionador1::mostrarEstadoJuego() const
     // imprime una linea de cierre para separar visualmente la sección
     std::cout << "=====================================" << std::endl;
 }
-/*-----------------------------------------------------------------------------------------------------------------------------*/
 
+/*-------------------------------------------------------------------------------------------------------------------*/
+void Gestionador1::terminarJuego()
+{
+    std::cout << "\n--- FIN DE LA RONDA ---" << std::endl;
+
+    // 1. Mostrar las cartas del crupier (todas reveladas)
+    if (croupierPrincipal != nullptr)
+    { // Verificación de puntero a nullptr
+        std::cout << croupierPrincipal->getNombre() << " revela sus cartas: ";
+        croupierPrincipal->mostrarTodasLasCartas();
+        std::cout << " (" << croupierPrincipal->getValorMano() << " puntos)" << std::endl;
+    }
+    else
+    {
+        std::cerr << "Error: El crupier no está inicializado. No se puede mostrar su mano." << std::endl;
+    }
+
+    std::cout << "\n--- Manos Finales de los Jugadores ---" << std::endl;
+    for (Participante1 *p : participantes)
+    {
+        // Comprobamos si el participante actual NO es el crupier.
+        if (p != croupierPrincipal)
+        { // Si el participante no es el crupier...
+            std::cout << p->getNombre() << " tiene: ";
+            p->mostrarMano();
+            std::cout << " (" << p->getValorMano() << " puntos)";
+            std::cout << std::endl; // Nueva línea al final de cada jugador
+        }
+    }
+    std::cout << "---------------------------------------" << std::endl;
+
+    // Mensaje para indicar que el juego ha finalizado y no se continuará.
+    std::cout << "Juego finalizado. ¡Gracias por jugar!" << std::endl;
+
+    // El destructor de Gestionador1 SÍ se llamará automáticamente antes de salir.
+    // ----------------------------------------------------------------------------------
+    // Llama a exit(0) para terminar el programa completamente
+    exit(0);
+}
+
+/*-------------------------------------------------------------------------------------------------------------------*/
+void Gestionador1::repartoInicial()
+{
+    std::cout << "\n--- Iniciando el Reparto Inicial de Cartas ---" << std::endl;
+
+    std::cout << "Repartiendo la primera carta a cada participante..." << std::endl;
+    for (Participante1 *p : participantes)
+    {
+        if (p != nullptr)
+        {
+            repartirCarta(p);
+        }
+    }
+    std::cout << "Repartiendo la segunda carta a cada participante..." << std::endl;
+    for (Participante1 *p : participantes)
+    {
+        if (p != nullptr)
+        {
+            repartirCarta(p);
+        }
+    }
+    if (croupierPrincipal != nullptr)
+    {
+        croupierPrincipal->setMostrandoCartaOculta(true);
+    }
+    std::cout << "--- Reparto Inicial Completado ---" << std::endl;
+}
+
+/*-------------------------------------------------------------------------------------------------------------------*/
+void Gestionador1::agregarJugador(const std::string &nombre)
+{
+    // crea un nuevo jugador y lo agrega al vector de participantes
+    Jugador1 *nuevoJugador = new Jugador1(nombre);
+    participantes.push_back(nuevoJugador); // agrega el nuevo jugador al vector de participantes
+    std::cout << "Jugador " << nombre << " agregado al juego." << std::endl;
+}
+
+/*-------------------------------------------------------------------------------------------------------------------*/
+// solicita a cada jugador que ingrese su apuesta, validando que sea un numero positivo
+void Gestionador1::abrirApuestas()
+{
+    for (Participante1 *p : participantes)
+    {
+        Jugador1 *jugador = dynamic_cast<Jugador1 *>(p);
+        if (jugador)
+        {
+            char respuesta;
+            while (true)
+            {
+                std::cout << "Jugador " << jugador->getNombre() << ", ¿deseas apostar esta ronda? (s/n): ";
+                std::cin >> respuesta;
+
+                if (std::cin.fail())
+                {
+                    std::cin.clear();                                                   // Limpia el error
+                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Descarta entrada invalida
+                    std::cout << "Entrada inválida. Intenta nuevamente.\n";
+                    continue;
+                }
+
+                respuesta = std::tolower(respuesta); // Acepta mayusculas o minusculas
+
+                if (respuesta == 's')
+                {
+                    jugador->setApuesta(1);                          // Apuesta simbolica
+                    jugador->setEstado(EstadoParticipante::JUGANDO); // activa
+                    std::cout << "Has apostado esta ronda.\n";
+                    break;
+                }
+                else if (respuesta == 'n')
+                {
+                    jugador->setApuesta(0);                           // No apostó
+                    jugador->setEstado(EstadoParticipante::PLANTADO); // se retira
+                    std::cout << "No apostaste esta ronda.\n";
+                    break;
+                }
+                else
+                {
+                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                    std::cout << "Por favor responde solo con 's' o 'n'.\n";
+                }
+            }
+        }
+    }
+}
+
+/*---------------------------------------------------------------------------------------------------------------------*/
+void Gestionador1::mostrarIndicesJugadores() const
+{
+    std::cout << "\n--- Jugadores Disponibles ---" << std::endl;
+    int jugadorContador = 0;
+    for (Participante1 *p : participantes)
+    {
+        if (p == nullptr)
+        {
+            continue;
+        }
+        if (p != this->croupierPrincipal)
+        {
+            if (Jugador1 *jugador = dynamic_cast<Jugador1 *>(p))
+            {
+                std::cout << "  [" << jugadorContador << "] " << jugador->getNombre() << std::endl;
+                jugadorContador++;
+            }
+        }
+    }
+    if (jugadorContador == 0)
+    {
+        std::cout << "No hay jugadores en el juego (aparte del crupier)." << std::endl;
+    }
+    std::cout << "-----------------------------" << std::endl;
+}
+
+/*---------------------------------------------------------------------------------------------------------------------*/
 Jugador1 *Gestionador1::getJugador(int indice)
 {
     // Validar el índice de entrada
@@ -430,169 +593,14 @@ Jugador1 *Gestionador1::getJugador(int indice)
     std::cerr << "Error: Índice de jugador fuera de rango o jugador no encontrado para el índice " << indice << "." << std::endl;
     return nullptr;
 }
-/*----------------------------------------------------------------------------------------------------------------*/
-void Gestionador1::repartirCarta(Participante1 *p)
+
+/*----------------------------------------------------------------------------------------------------------------------*/
+int Gestionador1::getNumeroJugadores() const
 {
-    if (p == nullptr)
-    {
-        std::cerr << "Error: Intentando repartir carta a un participante nulo." << std::endl;
-        return;
-    }
-    // 1. Obtener la carta de la baraja:
-    Carta1 *cartaObtenidaDeBaraja = baraja.repartirCarta();
-
-    if (cartaObtenidaDeBaraja != nullptr)
-    {
-        // 2. Entregar la carta al participante:
-        p->recibirCarta(cartaObtenidaDeBaraja);
-    }
-    else
-    {
-        std::cerr << "Advertencia: No quedan cartas en la baraja para repartir." << std::endl;
-    }
-}
-/*-------------------------------------------------------------------------------------------------------------------*/
-void Gestionador1::repartoInicial()
-{
-    std::cout << "\n--- Iniciando el Reparto Inicial de Cartas ---" << std::endl;
-
-    std::cout << "Repartiendo la primera carta a cada participante..." << std::endl;
-    for (Participante1 *p : participantes)
-    {
-        if (p != nullptr)
-        {
-            repartirCarta(p);
-        }
-    }
-    std::cout << "Repartiendo la segunda carta a cada participante..." << std::endl;
-    for (Participante1 *p : participantes)
-    {
-        if (p != nullptr)
-        {
-            repartirCarta(p);
-        }
-    }
-    if (croupierPrincipal != nullptr)
-    {
-        croupierPrincipal->setMostrandoCartaOculta(true);
-    }
-    std::cout << "--- Reparto Inicial Completado ---" << std::endl;
-}
-/*-------------------------------------------------------------------------------------------------------------------*/
-// Este método inicializa la ronda: limpia las manos anteriores,
-// cartas en la baraja y reparte las 2 cartas iniciales a jugadores activos y al croupier.
-void Gestionador1::iniciarJuego()
-{
-    std::cout << "\n--- Repartiendo cartas iniciales ---\n";
-
-    // Limpiar manos y reiniciar estados
-    // Antes de empezar, aseguramos que las manos estén vacías
-    // y todos los participantes marcados como 'JUGANDO' (excepto los retirados).
-    for (Participante1* p : participantes) {
-        p->limpiarMano();
-        p->setEstado(EstadoParticipante::JUGANDO);
-    }
-
-    // Calcular cuántas cartas mínimas se necesitan
-    // Para repartir 2 cartas a cada participante (jugadores + croupier),
-    // multiplicamos el total por 2.
-    int necesarias = participantes.size() * 2;
-
-    // Validar si la baraja tiene suficientes cartas
-    // Si no alcanza, reiniciamos o barajamos un nuevo mazo.
-    if (baraja.getNumeroCartas() < necesarias) {
-        std::cout << "Advertencia: No hay suficientes cartas. Reiniciando baraja...\n";
-        baraja = Baraja1(); // O puedes usar baraja.barajar() si prefieres solo mezclar
-    }
-
-    // Repartir 2 cartas a cada jugador activo
-    for (Participante1* p : participantes)
-    {
-        Jugador1* jugador = dynamic_cast<Jugador1*>(p);
-        // Solo damos cartas a jugadores reales que hayan apostado (>0)
-        if (jugador && jugador->getApuesta() > 0)
-        {
-            repartirCartas(jugador);
-            repartirCartas(jugador);
-        }
-    }
-
-    // Repartir 2 cartas al croupier
-    // Además, activamos la bandera para ocultar su primera carta.
-    croupierPrincipal->setMostrandoCartaOculta(true);
-    repartirCartas(croupierPrincipal);
-    repartirCartas(croupierPrincipal);
-
-    std::cout << "--- Cartas iniciales repartidas correctamente ---\n";
+    return participantes.size(); // retorna el numero de participantes en el juego usando el vector
 }
 
-/*-------------------------------------------------------------------------------------------------------------------*/
-
-// Este método compara las manos de todos los jugadores contra la del croupier,
-// determina si ganan, pierden o empatan, y muestra el resultado por consola.
-void Gestionador1::definirGanador()
-{
-    std::cout << "\n--- Resultados de la ronda ---\n";
-
-    //Obtener datos del croupier
-    int valorCroupier = croupierPrincipal->getValorMano();
-    bool croupierSePaso = croupierPrincipal->estaPasado();
-
-    //Analizar a cada jugador en el vector de participantes
-    for (Participante1* p : participantes)
-    {
-        Jugador1* jugador = dynamic_cast<Jugador1*>(p);
-
-        // Solo evaluamos jugadores reales que hayan hecho una apuesta
-        if (jugador && jugador->getApuesta() > 0)
-        {
-            int valorJugador = jugador->getValorMano();
-            bool jugadorSePaso = jugador->estaPasado();
-
-            std::cout << "\nJugador " << jugador->getNombre()
-                      << " tiene " << valorJugador << " puntos. ";
-
-            //  Caso 1: El jugador se pasó de 21 → pierde automáticamente
-            if (jugadorSePaso)
-            {
-                std::cout << "Se pasó. Pierde.\n";
-                jugador->setEstado(EstadoParticipante::PASADO);
-            }
-            //  Caso 2: Jugador tiene Blackjack y el croupier no → gana automáticamente
-            else if (jugador->tieneBlackjackActivo() && !croupierPrincipal->tieneBlackjackActivo())
-            {
-                std::cout << "¡Blackjack! Gana automáticamente.\n";
-                jugador->setEstado(EstadoParticipante::BLACKJACK);
-            }
-            //  Caso 3: El croupier se pasó → gana el jugador
-            else if (croupierSePaso)
-            {
-                std::cout << "El croupier se pasó. ¡Gana el jugador!\n";
-            }
-            // Caso 4: Jugador tiene más puntos que el croupier → gana
-            else if (valorJugador > valorCroupier)
-            {
-                std::cout << "Tiene más puntos que el croupier. ¡Gana!\n";
-            }
-            //  Caso 5: Jugador tiene menos puntos que el croupier → pierde
-            else if (valorJugador < valorCroupier)
-            {
-                std::cout << "Tiene menos puntos que el croupier. Pierde.\n";
-                jugador->setEstado(EstadoParticipante::PASADO);
-            }
-            //  Caso 6: Empate → recupera su apuesta 
-            else
-            {
-                std::cout << "Empate. Recupera su apuesta.\n";
-                //Aqui no se cambia de estado, no es necesario.
-            }
-        }
-    }
-
-    std::cout << "\n--- Fin de resultados ---\n";
-}
-/*-------------------------------------------------------------------------------------------------------------------*/
-
+/*-----------------------------------------------------------------------------------------------------------------------------*/
 // Este método calcula y devuelve el total de todas las apuestas activas,
 // sumando las apuestas hechas por cada jugador en la ronda actual. filtra solo apuestas positivas para evitar errores.
 int Gestionador1::totalApuestasPartida() const
@@ -600,10 +608,10 @@ int Gestionador1::totalApuestasPartida() const
     int total = 0;
 
     // Recorrer todos los participantes del juego
-    for (Participante1* p : participantes)
+    for (Participante1 *p : participantes)
     {
         //  Intentamos convertir el participante a Jugador1 para ignorar al croupier
-        Jugador1* jugador = dynamic_cast<Jugador1*>(p);
+        Jugador1 *jugador = dynamic_cast<Jugador1 *>(p);
 
         if (jugador)
         {
@@ -622,4 +630,4 @@ int Gestionador1::totalApuestasPartida() const
     return total;
 }
 
-
+/*-----------------------------------------------------------------------------------------------------------------------------*/
