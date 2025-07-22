@@ -76,20 +76,3 @@ bool Mano1::tieneBlackjack() const {
     }
     return false; // No es Blackjack.
 }
-// --- getCarta ---
-// Retorna un puntero constante a la carta en el índice especificado.
-// Si el índice está fuera de rango, retorna nullptr.
-const Carta1* Mano1::getCarta(int indice) const {
-    if (indice >= 0 && indice < static_cast<int>(cartas.size())) {
-        return cartas[indice];
-    }
-    return nullptr; // Índice fuera de rango
-}
-
-// --- getNumeroCartas ---
-// Retorna el número de cartas en la mano.
-int Mano1::getNumeroCartas() const {
-    return static_cast<int>(cartas.size());
-}
-
-// Fin de la implementación de Mano1.cpp
