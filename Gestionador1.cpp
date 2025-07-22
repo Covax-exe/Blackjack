@@ -374,9 +374,6 @@ void Gestionador1::mostrarEstadoJuego() const
     // muestra las cartas del croupier (si tiene carta oculta se encarga su función)
     croupierPrincipal->mostrarMano();
 
-    // imprime el valor total actual de la mano del croupier
-    std::cout << " (" << croupierPrincipal->getValorMano() << " puntos)" << std::endl;
-
     // itera sobre todos los participantes del juego (croupier y jugadores)
     for (Participante1 *p : participantes)
     {
