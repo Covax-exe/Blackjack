@@ -479,16 +479,37 @@ void Gestionador1::repartoInicial()
     std::cout << "--- Reparto Inicial Completado ---" << std::endl;
 }
 /*-------------------------------------------------------------------------------------------------------------------*/
-// Este método reparte dos cartas iniciales a todos los jugadores activos
-// y al croupier, para iniciar la ronda del juego.
+// Este método inicializa la ronda: limpia las manos anteriores,
+// cartas en la baraja y reparte las 2 cartas iniciales a jugadores activos y al croupier.
 void Gestionador1::iniciarJuego()
 {
-    std::cout << "\nRepartiendo cartas iniciales...\n";
+    std::cout << "\n=== Repartiendo cartas iniciales ===\n";
 
-    // 🔹 Repartir 2 cartas a cada jugador que haya apostado
+    // Limpiar manos y reiniciar estados
+    // Antes de empezar, aseguramos que las manos estén vacías
+    // y todos los participantes marcados como 'JUGANDO' (excepto los retirados).
+    for (Participante1* p : participantes) {
+        p->limpiarMano();
+        p->setEstado(EstadoParticipante::JUGANDO);
+    }
+
+    // Calcular cuántas cartas mínimas se necesitan
+    // Para repartir 2 cartas a cada participante (jugadores + croupier),
+    // multiplicamos el total por 2.
+    int necesarias = participantes.size() * 2;
+
+    // Validar si la baraja tiene suficientes cartas
+    // Si no alcanza, reiniciamos o barajamos un nuevo mazo.
+    if (baraja.getNumeroCartas() < necesarias) {
+        std::cout << "Advertencia: No hay suficientes cartas. Reiniciando baraja...\n";
+        baraja = Baraja1(); // O puedes usar baraja.barajar() si prefieres solo mezclar
+    }
+
+    // Repartir 2 cartas a cada jugador activo
     for (Participante1* p : participantes)
     {
         Jugador1* jugador = dynamic_cast<Jugador1*>(p);
+        // Solo damos cartas a jugadores reales que hayan apostado (>0)
         if (jugador && jugador->getApuesta() > 0)
         {
             repartirCartas(jugador);
@@ -496,11 +517,14 @@ void Gestionador1::iniciarJuego()
         }
     }
 
-    // 🔹 Repartir 2 cartas al croupier
+    // Repartir 2 cartas al croupier
+    // Además, activamos la bandera para ocultar su primera carta.
+    croupierPrincipal->setMostrandoCartaOculta(true);
     repartirCartas(croupierPrincipal);
     repartirCartas(croupierPrincipal);
 
-    std::cout << "Cartas iniciales repartidas.\n";
+    std::cout << "=== Cartas iniciales repartidas correctamente ===\n";
 }
+
 /*-------------------------------------------------------------------------------------------------------------------*/
 
