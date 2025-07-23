@@ -118,7 +118,7 @@ void Gestionador1::ejecutarTurno()
 
     reiniciarRonda(); 
 
-    std::cout << "\n Fase de apuestas: ¡Hora de decidir si juegas esta ronda!\n";";
+    std::cout << "\n Fase de apuestas: ¡Hora de decidir si juegas esta ronda!\n";
     abrirApuestas(); 
 
     bool hayJugadoresActivos = false;
