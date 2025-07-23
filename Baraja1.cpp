@@ -63,7 +63,7 @@ void Baraja1::barajar() {
 }
 Carta1* Baraja1::repartirCarta() {
     if (cartas.empty()) {
-        std::cout << "No hay cartas disponibles para repartir :( ." << std::endl;
+        std::cout << "¡Ups! No quedan cartas para repartir :(" << std::endl;
         return nullptr; // Si no hay cartas, retorna nullptr
     }
     
