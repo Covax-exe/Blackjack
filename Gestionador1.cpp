@@ -76,10 +76,6 @@ void Gestionador1::iniciarJuego()
         p->setEstado(EstadoParticipante::JUGANDO);
     }
 
-    // Calcular cuántas cartas mínimas se necesitan
-    // Para repartir 2 cartas a cada participante (jugadores + croupier),
-    // multiplicamos el total por 2.
-    int necesarias = participantes.size() * 2;
 
     // Validar si la baraja tiene suficientes cartas
     // advertir si quedan pocas cartas
