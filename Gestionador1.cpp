@@ -685,7 +685,7 @@ int Gestionador1::totalApuestasPartida() const
 /*-----------------------------------------------------------------------------------------------------------------------------*/
 
 void Gestionador1::reiniciarRonda() {
-    std::cout << "\n--- Reiniciando la ronda para todos los participantes y baraja ouo ---\n";
+    std::cout << "\n--- Reiniciando la ronda para todos los participantes y baraja ---\n";
     for (Participante1* p : participantes) {
         if (p != nullptr) {
             p->limpiarMano();
