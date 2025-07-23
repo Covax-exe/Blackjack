@@ -72,9 +72,9 @@ Carta1* Baraja1::repartirCarta() {
     
     // Elimina esa carta del vector. Esto asegura que no se repita.
     cartas.erase(cartas.begin()); 
+
+
     
-    // Imprime la carta repartida. Esto ahora se ejecutará.
-    std::cout << "Carta repartida con exito!: " << (*carta).toString() << std::endl; 
     
     // Retorna el puntero a la carta repartida.
     return carta; 
