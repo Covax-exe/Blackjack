@@ -33,5 +33,7 @@ public:
     Jugador1 *getJugador(int indice);
     int getNumeroJugadores() const;
     int totalApuestasPartida() const;
+    void reiniciarRonda();
+
 };
 #endif // GESTIONADOR1_H
