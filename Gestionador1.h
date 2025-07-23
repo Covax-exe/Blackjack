@@ -14,7 +14,6 @@ private:
     std::vector<Participante1 *> participantes;
     Croupier1 *croupierPrincipal;
     Baraja1 baraja;
-    int totalApuestasJuego;
 
 public:
     Gestionador1();
