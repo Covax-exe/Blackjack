@@ -38,13 +38,9 @@ int main()
         switch (opcion)
         {
         case 1:
-            gestor.abrirApuestas();
-            gestor.iniciarJuego();
-            gestor.mostrarEstadoJuego();
+            
             gestor.ejecutarTurno();
-            gestor.definirGanador();
-            gestor.pagarApuestas();
-            gestor.terminarJuego(); // Limpiar estado para nueva ronda
+             // Limpiar estado para nueva ronda
             break;
 
         case 2:
