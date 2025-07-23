@@ -110,52 +110,81 @@ void Gestionador1::iniciarJuego()
 }
 
 /*-------------------------------------------------------------------------------------------------------------------*/
-void Gestionador1::ejecutarTurno()
+void Gestionador1::ejecutarTurno() 
 {
-    std::cout << "\n--- Inicio de la Fase de Turnos ---" << std::endl;
+    std::cout << "\n========================================\n";
+    std::cout << "           INICIANDO NUEVA RONDA        \n";
+    std::cout << "========================================\n";
 
-    // --- FASE 1: Turnos de los Jugadores --- //
-    std::cout << "\n--- Turno de los Jugadores ---" << std::endl;
+    reiniciarRonda(); 
 
-    // Iteramos sobre todos los participantes para encontrar a los jugadores.
+    std::cout << "\n--- Fase de Apuestas ---\n";
+    abrirApuestas(); 
+
+    bool hayJugadoresActivos = false;
+    for (Participante1* p : participantes) {
+        if (Jugador1* jugador = dynamic_cast<Jugador1*>(p)) {
+            if (jugador->getApuesta() > 0) {
+                hayJugadoresActivos = true;
+                break;
+            }
+        }
+    }
+
+    if (!hayJugadoresActivos && getNumeroJugadores() > 1) { 
+        std::cout << "Ningún jugador ha apostado en esta ronda. Terminando la ronda.\n";
+        return; 
+    } else if (getNumeroJugadores() <= 1) { // Solo el crupier
+        std::cout << "No hay jugadores en la mesa para iniciar una ronda. Terminando.\n";
+        return; 
+    }
+
+    std::cout << "\n--- Repartiendo cartas iniciales ---\n";
+    repartoInicial(); 
+
+    std::cout << "--- Cartas Iniciales Repartidas ---" << std::endl;
+    mostrarEstadoJuego(); 
+
+
+    std::cout << "\n--- Inicio de la Fase de Turnos de Jugadores ---" << std::endl;
+
     for (Participante1 *p : participantes)
     {
         if (Jugador1 *jugador = dynamic_cast<Jugador1 *>(p))
         {
-            if (jugador->getEstado() == EstadoParticipante::JUGANDO)
+            
+            if (jugador->getEstado() == EstadoParticipante::JUGANDO && jugador->getApuesta() > 0)
             {
                 std::cout << "\nEs el turno de " << jugador->getNombre() << "." << std::endl;
-                mostrarEstadoJuego(); // Muestra el estado actual del juego (crupier aún con carta oculta)
-
+            
                 while (jugador->getEstado() == EstadoParticipante::JUGANDO && jugador->getValorMano() < 21)
                 {
                     std::cout << jugador->getNombre() << ", tu mano actual: ";
-                    jugador->mostrarMano(); // Muestra las cartas del jugador
+                    jugador->mostrarMano();
                     std::cout << " (" << jugador->getValorMano() << " puntos)." << std::endl;
 
                     char decision;
-                    std::cout << "Digite en minuscula la opcion encerrada en parentesis (solo la letra)";
+                    std::cout << "Digite en minúscula la opción encerrada en paréntesis (solo la letra)";
                     std::cout << "¿Quieres (P)edir carta o (X)plantarte? ";
                     std::cin >> decision;
-                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); 
 
-                    decision = std::tolower(decision); // Convertir la entrada a minúscula
+                    decision = std::tolower(decision); 
 
                     if (decision == 'p')
                     {
-                        repartirCarta(jugador); // Le damos una carta al jugador
+                        repartirCarta(jugador);
                         std::cout << jugador->getNombre() << " pide una carta." << std::endl;
 
-                        // Evaluar la mano después de pedir la carta
                         if (jugador->getValorMano() > 21)
                         {
                             std::cout << jugador->getNombre() << " se ha pasado con " << jugador->getValorMano() << " puntos. ¡Pierde!" << std::endl;
-                            jugador->setEstado(EstadoParticipante::PASADO); // Marcar como pasado
+                            jugador->setEstado(EstadoParticipante::PASADO); 
                         }
                         else if (jugador->getValorMano() == 21)
                         {
                             std::cout << jugador->getNombre() << " tiene 21 puntos." << std::endl;
-                            // Automáticamente se planta si tiene 21
+                            
                             jugador->setEstado(EstadoParticipante::PLANTADO);
                         }
                     }
@@ -168,32 +197,32 @@ void Gestionador1::ejecutarTurno()
                     {
                         std::cout << "Decisión inválida. Por favor, ingresa 'P' para pedir o 'X' para plantarte." << std::endl;
                     }
-                    mostrarEstadoJuego();
-                } // Fin del bucle 'while' para el jugador actual
+                    mostrarEstadoJuego(); 
+                } 
 
-                // Mensaje final para el jugador, si no se dió al salir del while
-                if (jugador->getEstado() == EstadoParticipante::JUGANDO)
+                if (jugador->getEstado() == EstadoParticipante::JUGANDO) 
                 {
-                    jugador->setEstado(EstadoParticipante::PLANTADO); // Asegurarse de que el estado final sea plantado
+                    jugador->setEstado(EstadoParticipante::PLANTADO); 
                 }
                 std::cout << jugador->getNombre() << " ha terminado su turno." << std::endl;
             }
             else
             {
-                std::cout << jugador->getNombre() << " no juega este turno (estado: "
-                          << static_cast<int>(jugador->getEstado()) << ")." << std::endl;
+                
+                std::cout << jugador->getNombre() << " no participa en esta ronda (estado: "
+                          << static_cast<int>(jugador->getEstado()) << " o apuesta 0)." << std::endl;
             }
         }
     }
     std::cout << "\n--- Turno de los Jugadores Finalizado ---" << std::endl;
-
-    // --- FASE 2: Turno del Crupier --- //
+   
     std::cout << "\n--- Turno del Crupier ---" << std::endl;
     if (croupierPrincipal != nullptr)
     {
-        croupierPrincipal->setMostrandoCartaOculta(false);
+        croupierPrincipal->setMostrandoCartaOculta(false); 
         std::cout << "El crupier revela su carta oculta." << std::endl;
-        mostrarEstadoJuego();
+        mostrarEstadoJuego(); 
+
         while (croupierPrincipal->getValorMano() < 17 && croupierPrincipal->getValorMano() <= 21)
         {
             std::cout << "El crupier tiene " << croupierPrincipal->getValorMano() << " puntos y pide carta." << std::endl;
@@ -201,7 +230,6 @@ void Gestionador1::ejecutarTurno()
             mostrarEstadoJuego();
         }
 
-        // Evaluar la mano final del crupier
         if (croupierPrincipal->getValorMano() > 21)
         {
             std::cout << "El crupier se ha pasado con " << croupierPrincipal->getValorMano() << " puntos. ¡Todos los jugadores restantes ganan!" << std::endl;
@@ -220,11 +248,19 @@ void Gestionador1::ejecutarTurno()
     std::cout << "\n--- Turno del Crupier Finalizado ---" << std::endl;
 
     std::cout << "\n--- Todos los turnos han sido ejecutados ---" << std::endl;
+    
+    definirGanador(); 
+    pagarApuestas();  
+    terminarJuego(); 
+
+    std::cout << "\n========================================\n";
+    std::cout << "           UwU FIN DE LA RONDA UwU          \n";
+    std::cout << "========================================\n";
 }
 
+
 /*-------------------------------------------------------------------------------------------------------------------*/
-// Este método compara las manos de todos los jugadores contra la del croupier,
-// determina si ganan, pierden o empatan, y muestra el resultado por consola.
+//cuidado con los comentarios de IA!!!!
 void Gestionador1::definirGanador()
 {
     std::cout << "\n--- Resultados de la ronda ---\n";
@@ -627,3 +663,35 @@ int Gestionador1::totalApuestasPartida() const
 }
 
 /*-----------------------------------------------------------------------------------------------------------------------------*/
+
+void Gestionador1::reiniciarRonda() {
+    std::cout << "\n--- Reiniciando la ronda para todos los participantes y baraja ouo ---\n";
+    for (Participante1* p : participantes) {
+        if (p != nullptr) {
+            p->limpiarMano();
+            p->setEstado(EstadoParticipante::JUGANDO); 
+
+            if (Jugador1* jugador = dynamic_cast<Jugador1*>(p)) {
+                jugador->setApuesta(0); 
+            }
+        }
+    }
+    if (croupierPrincipal != nullptr) {
+        croupierPrincipal->setMostrandoCartaOculta(true); 
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/*--------------------------------------------------------------------------------------------------------------------------*/
+
+
