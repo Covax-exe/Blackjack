@@ -14,7 +14,7 @@ Gestionador1::Gestionador1()
     //  Añadir el puntero al Croupier al vector de participantes (usando polimorfismo)
     participantes.push_back(croupierPrincipal);
     // con esto aseguramos que al inicializar el gestionador, se le asigne una baraja y un cropier para el juego completo.
-    std::cout << "Gestor de Blackjack inicializado. Croupier y Baraja listos." << std::endl;
+    std::cout << "¡Bienvenido! El juego de Blackjack está listo. Baraja mezclada y crupier preparado." << std::endl;
 }
 
 // Destructor
@@ -34,7 +34,7 @@ Gestionador1::~Gestionador1()
     Es buena práctica apuntarlo a nullptr para evitar punteros colgantes.
     es una buena practica y sugerido para evitar errores en compilación*/
     croupierPrincipal = nullptr;
-    std::cout << "Gestor de Blackjack destruido. Memoria de participantes liberada." << std::endl;
+    std::cout << "Cierre del juego completado. Recursos liberados correctamente." << std::endl;
     // destructor hecho a "mano" para verificar la correcta liberación en memoria de los objetos creados.
 }
 
@@ -43,7 +43,7 @@ void Gestionador1::repartirCarta(Participante1 *p)
 {
     if (p == nullptr)
     {
-        std::cerr << "Error: Intentando repartir carta a un participante nulo." << std::endl;
+        std::cerr << "Error: No se puede repartir carta. Participante no válido." << std::endl;
         return;
     }
     // 1. Obtener la carta de la baraja:
@@ -56,7 +56,7 @@ void Gestionador1::repartirCarta(Participante1 *p)
     }
     else
     {
-        std::cerr << "Advertencia: No quedan cartas en la baraja para repartir." << std::endl;
+        std::cerr << "La baraja está vacía. No se pudo repartir carta." << std::endl;
     }
 }
 
@@ -65,7 +65,7 @@ void Gestionador1::repartirCarta(Participante1 *p)
 // cartas en la baraja y reparte las 2 cartas iniciales a jugadores activos y al croupier.
 void Gestionador1::iniciarJuego()
 {
-    std::cout << "\n--- Repartiendo cartas iniciales ---\n";
+    std::cout << "\n Repartiendo cartas iniciales a los jugadores...\n";
 
     // Limpiar manos y reiniciar estados
     // Antes de empezar, aseguramos que las manos estén vacías
@@ -84,7 +84,7 @@ void Gestionador1::iniciarJuego()
     // Validar si la baraja tiene suficientes cartas
     // advertir si quedan pocas cartas
     if (baraja.getNumeroCartas() < participantes.size() * 2) {
-        std::cout << "Advertencia: Quedan pocas cartas en el mazo. Puede ser necesario barajar pronto.\n";
+        std::cout << "Atención: Quedan pocas cartas en el mazo. Considera barajar pronto.\n";
     }
 
 
@@ -106,19 +106,19 @@ void Gestionador1::iniciarJuego()
     repartirCarta(croupierPrincipal);
     repartirCarta(croupierPrincipal);
 
-    std::cout << "--- Cartas iniciales repartidas correctamente ---\n";
+    std::cout << "Cartas iniciales repartidas. ¡Comienza la ronda!\n";
 }
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 void Gestionador1::ejecutarTurno() 
 {
     std::cout << "\n========================================\n";
-    std::cout << "           INICIANDO NUEVA RONDA        \n";
+    std::cout << "          COMIENZA UNA NUEVA RONDA        \n";
     std::cout << "========================================\n";
 
     reiniciarRonda(); 
 
-    std::cout << "\n--- Fase de Apuestas ---\n";
+    std::cout << "\n Fase de apuestas: ¡Hora de decidir si juegas esta ronda!\n";";
     abrirApuestas(); 
 
     bool hayJugadoresActivos = false;
@@ -132,21 +132,21 @@ void Gestionador1::ejecutarTurno()
     }
 
     if (!hayJugadoresActivos && getNumeroJugadores() > 1) { 
-        std::cout << "Ningún jugador ha apostado en esta ronda. Terminando la ronda.\n";
+        std::cout << "Nadie apostó en esta ronda. La ronda ha sido cancelada.\n";
         return; 
     } else if (getNumeroJugadores() <= 1) { // Solo el crupier
-        std::cout << "No hay jugadores en la mesa para iniciar una ronda. Terminando.\n";
+        std::cout << "No hay jugadores disponibles. Ronda finalizada automáticamente.\n";
         return; 
     }
 
     std::cout << "\n--- Repartiendo cartas iniciales ---\n";
     repartoInicial(); 
 
-    std::cout << "--- Cartas Iniciales Repartidas ---" << std::endl;
+    std::cout << "--- Cartas iniciales listas. ¡Veamos qué tiene cada quien! ---" << std::endl;
     mostrarEstadoJuego(); 
 
 
-    std::cout << "\n--- Inicio de la Fase de Turnos de Jugadores ---" << std::endl;
+    std::cout << "\n--- Turnos de los jugadores: ¡A jugar! ---" << std::endl;
 
     for (Participante1 *p : participantes)
     {
@@ -164,8 +164,8 @@ void Gestionador1::ejecutarTurno()
                     std::cout << " (" << jugador->getValorMano() << " puntos)." << std::endl;
 
                     char decision;
-                    std::cout << "Digite en minúscula la opción encerrada en paréntesis (solo la letra)";
-                    std::cout << "¿Quieres (P)edir carta o (X)plantarte? ";
+                    std::cout << "Llego la hora de la verdad...";
+                    std::cout << "Digite en minúscula (solo la letra) 'p' para pedir carta o 'x' para plantarte: ";
                     std::cin >> decision;
                     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); 
 
@@ -195,7 +195,7 @@ void Gestionador1::ejecutarTurno()
                     }
                     else
                     {
-                        std::cout << "Decisión inválida. Por favor, ingresa 'P' para pedir o 'X' para plantarte." << std::endl;
+                        std::cout << "Opción no válida. Escribe 'p' para pedir o 'x' para plantarte." << std::endl;
                     }
                     mostrarEstadoJuego(); 
                 } 
@@ -216,23 +216,23 @@ void Gestionador1::ejecutarTurno()
     }
     std::cout << "\n--- Turno de los Jugadores Finalizado ---" << std::endl;
    
-    std::cout << "\n--- Turno del Crupier ---" << std::endl;
+    std::cout << "\n--- Turno del crupier: veamos qué hace la casa... ---" << std::endl;
     if (croupierPrincipal != nullptr)
     {
         croupierPrincipal->setMostrandoCartaOculta(false); 
-        std::cout << "El crupier revela su carta oculta." << std::endl;
+        std::cout << "El crupier revela su carta oculta..." << std::endl;
         mostrarEstadoJuego(); 
 
         while (croupierPrincipal->getValorMano() < 17 && croupierPrincipal->getValorMano() <= 21)
         {
-            std::cout << "El crupier tiene " << croupierPrincipal->getValorMano() << " puntos y pide carta." << std::endl;
+            std::cout << "El crupier tiene " << croupierPrincipal->getValorMano() << " puntos. Decide pedir una carta." << std::endl;
             repartirCarta(croupierPrincipal);
             mostrarEstadoJuego();
         }
 
         if (croupierPrincipal->getValorMano() > 21)
         {
-            std::cout << "El crupier se ha pasado con " << croupierPrincipal->getValorMano() << " puntos. ¡Todos los jugadores restantes ganan!" << std::endl;
+            std::cout << "El crupier se ha pasado con " << croupierPrincipal->getValorMano() << " puntos. ¡Los jugadores restantes ganan esta ronda!" << std::endl;
             croupierPrincipal->setEstado(EstadoParticipante::PASADO);
         }
         else
@@ -245,9 +245,9 @@ void Gestionador1::ejecutarTurno()
     {
         std::cerr << "Error: No se encontró un objeto crupier para ejecutar su turno." << std::endl;
     }
-    std::cout << "\n--- Turno del Crupier Finalizado ---" << std::endl;
+    std::cout << "\n--- El crupier ha terminado su turno. ---" << std::endl;
 
-    std::cout << "\n--- Todos los turnos han sido ejecutados ---" << std::endl;
+    std::cout << "\n--- Todos los turnos han finalizado. Veamos los resultados... ---" << std::endl;
     
     definirGanador(); 
     pagarApuestas();  
@@ -263,7 +263,7 @@ void Gestionador1::ejecutarTurno()
 //cuidado con los comentarios de IA!!!!
 void Gestionador1::definirGanador()
 {
-    std::cout << "\n--- Resultados de la ronda ---\n";
+    std::cout << "\n--- RESULTADOS DE LA RONDA ---\n";
 
     // Obtener datos del croupier
     int valorCroupier = croupierPrincipal->getValorMano();
@@ -286,7 +286,7 @@ void Gestionador1::definirGanador()
             //  Caso 1: El jugador se pasó de 21 → pierde automáticamente
             if (jugadorSePaso)
             {
-                std::cout << "Se pasó. Pierde.\n";
+                std::cout << "Se pasó de 21. Pierde esta ronda.\n";
                 jugador->setEstado(EstadoParticipante::PASADO);
             }
             //  Caso 2: Jugador tiene Blackjack y el croupier no → gana automáticamente
@@ -314,13 +314,14 @@ void Gestionador1::definirGanador()
             //  Caso 6: Empate → recupera su apuesta
             else
             {
-                std::cout << "Empate. Recupera su apuesta.\n";
+                std::cout << "Empate con el crupier. Recupera su apuesta.\n";
                 // Aqui no se cambia de estado, no es necesario.
             }
         }
     }
 
-    std::cout << "\n--- Fin de resultados ---\n";
+    std::cout << "\n Eso fue todo por esta ronda. ¡Buena suerte en la siguiente!" << std::endl;
+std::cout <<   "---------------------------------------------------------------\n";
 }
 
 /*-------------------------------------------------------------------------------------------------------------------*/
@@ -372,25 +373,25 @@ void Gestionador1::pagarApuestas()
             else if (jugador->tieneBlackjackActivo() && !croupierPrincipal->tieneBlackjackActivo())
             {
                 // Se le informa que gana el doble de su apuesta (según la lógica actual del juego)
-                std::cout << "¡Blackjack! Gana " << apuesta * 2 << " unidades." << std::endl;
+                std::cout << "¡Blackjack! Gana " << apuesta * 2 << " unidades. ¡Bien jugado!" << std::endl;
             }
 
             // Si el croupier se pasó o el jugador tiene mayor puntuación, gana
             else if (croupierSePaso || valorJugador > valorCroupier)
             {
-                std::cout << "Gana " << apuesta << " unidades." << std::endl;
+                std::cout << "Gana " << apuesta << " unidades. ¡Bien jugado!" << std::endl;
             }
 
             // Si el valor de la mano del jugador es menor al del croupier, pierde
             else if (valorJugador < valorCroupier)
             {
-                std::cout << "Pierde su apuesta de " << apuesta << " unidades." << std::endl;
+                std::cout << "Pierde su apuesta de " << apuesta << " unidades.¡Vuelve a intentarlo!" << std::endl;
             }
 
             // Si el jugador y el croupier tienen el mismo puntaje, hay empate
             else
             {
-                std::cout << "Empate. Recupera su apuesta de " << apuesta << " unidades." << std::endl;
+                std::cout << "Empate. Recupera su apuesta de " << apuesta << " unidades. ¡Vuelve pronto!" << std::endl;
             }
         }
     }
@@ -434,7 +435,7 @@ void Gestionador1::mostrarEstadoJuego() const
     }
 
     // imprime una linea de cierre para separar visualmente la sección
-    std::cout << "=====================================" << std::endl;
+    std::cout << "----------------------------" << std::endl;
 }
 
 /*-------------------------------------------------------------------------------------------------------------------*/
@@ -474,7 +475,7 @@ void Gestionador1::terminarJuego()
     // Bucle para preguntar hasta que se ingrese 's' o 'S'
     do
     {
-        std::cout << "Presione 's' para salir del juego, o cualquier otra tecla para volver al menú: ";
+        std::cout << "¿Deseas salir del juego? Presione 's' para salir del juego, o cualquier otra tecla para volver al menú: ";
         std::cin >> decisionSalir;
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Limpiar el buffer de entrada
 
