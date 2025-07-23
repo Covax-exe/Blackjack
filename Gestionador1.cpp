@@ -470,12 +470,31 @@ void Gestionador1::terminarJuego()
 
     // Mensaje para indicar que el juego ha finalizado y no se continuará.
     std::cout << "Juego finalizado. ¡Gracias por jugar!" << std::endl;
+    char decisionSalir;
+    // Bucle para preguntar hasta que se ingrese 's' o 'S'
+    do
+    {
+        std::cout << "Presione 's' para salir del juego, o cualquier otra tecla para volver al menú: ";
+        std::cin >> decisionSalir;
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Limpiar el buffer de entrada
 
-    // El destructor de Gestionador1 SÍ se llamará automáticamente antes de salir.
-    // ----------------------------------------------------------------------------------
-    // Llama a exit(0) para terminar el programa completamente
-    exit(0);
+        decisionSalir = std::tolower(decisionSalir); // Convertir a minúscula
+
+        if (decisionSalir == 's')
+        {
+            std::cout << "Saliendo del programa. ¡Gracias por jugar!\n";
+            exit(0); // Termina el programa
+        }
+        else
+        {
+            std::cout << "Volviendo al menú principal.\n";
+            // Si no es 's', el bucle termina y la función retorna,
+            // permitiendo al bucle principal del programa (en main) continuar.
+            break; // Salir del bucle do-while
+        }
+    } while (true); // Este bucle solo se romperá con 's' (exit) o con cualquier otra tecla (break)
 }
+
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 void Gestionador1::repartoInicial()
